@@ -1,6 +1,7 @@
 import { FX, Scene } from 'phaser';
 import { Spark } from './assets/spark';
 import { MC } from './assets/mc';
+import { Robot } from './assets/robot'
 
 export class Game extends Scene
 {
@@ -85,6 +86,77 @@ export class Game extends Scene
                 frameHeight: 72
             }
         )
+
+        this.load.spritesheet('robAtt1',
+            'assets/characterAssets/cyborg/Attack_1.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robAtt2',
+            'assets/characterAssets/cyborg/Attack_2.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robAtt3',
+            'assets/characterAssets/cyborg/Attack_3.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robShoot',
+            'assets/characterAssets/cyborg/Attack_4.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robDead',
+            'assets/characterAssets/cyborg/Dead.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robEnabling',
+            'assets/characterAssets/cyborg/Enabling.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robHurt',
+            'assets/characterAssets/cyborg/Hurt.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robIdle',
+            'assets/characterAssets/cyborg/Idle.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robWalk',
+            'assets/characterAssets/cyborg/Pick_Up.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('robShutdown',
+            'assets/characterAssets/cyborg/Shutdown.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
     }
 
     create ()
@@ -144,6 +216,17 @@ export class Game extends Scene
 
             this.particle.emitParticleAt(x, y)
         })
+
+        this.foe = new Robot(this, 500, 400, 'robot');
+        this.foe.setScale(1.5)
+
+        this.physics.add.existing(this.foe)
+        this.foe.setSize(20, 60);
+        this.foe.body.offset.x = 55;
+        this.foe.body.offset.y = 65;
+        this.foe.setCollideWorldBounds(true)
+        this.foe.body.setGravity(0, 300)
+        this.physics.add.collider(this.foe, platforms)
 
 
         this.anims.create({
@@ -215,40 +298,77 @@ export class Game extends Scene
             frames: this.anims.generateFrameNumbers('sparkHit', { start: 0, end: 3}),
             frameRate: 10,
         })
-    }
 
+        this.anims.create({
+            key: 'robAtt1',
+            frames: this.anims.generateFrameNumbers('robAtt1', { start: 0, end: 3}),
+            framRate: 5,
+            duration: 400
+        })
 
-
-    animate(time, delta) {
-        if (this.slash.isDown) {
-            if (this.lastAttack === 3 || this.lastAttack === 4) {
-                this.player.anims.play('attack1', true).once('animationcomplete', () => {
-                    this.lastAttack = 1
-                })
-            } else if (this.lastAttack === 1) {
-                this.player.anims.play('attack2', true).once('animationcomplete', () => {
-                    this.lastAttack = 2
-                })
-            } else {
-                this.player.anims.play('attack3', true).once('animationcomplete', () => {
-                    this.lastAttack = 3
-                })
-            }
-        } else if (this.shoot.isDown && time > this.lastFired) {
-            this.player.anims.play('shoot', true).once('animationcomplete', () => {
-                this.lastAttack = 4
-            })
-        }else if (!this.player.body.touching.down) {
-            this.player.anims.play('falling', true)
-        } else if (this.cursors.left.isDown || this.cursors.right.isDown) {
-            this.player.anims.play('run', true)
-        } else {
-            this.player.anims.play('idle', true)
-        }
+        this.anims.create({
+            key: 'robAtt2',
+            frames: this.anims.generateFrameNumbers('robAtt2', { start: 0, end: 1}),
+            framRate: 5,
+            duration: 400
+        })
+        this.anims.create({
+            key: 'robAtt3',
+            frames: this.anims.generateFrameNumbers('robAtt3', { start: 0, end: 1}),
+            framRate: 5,
+            duration: 400
+        })
+        this.anims.create({
+            key: 'robShoot',
+            frames: this.anims.generateFrameNumbers('robShoot', { start: 0, end: 1}),
+            framRate: 10,
+            // repeat: -1
+            duration: 600
+        })
+        this.anims.create({
+            key: 'robDead',
+            frames: this.anims.generateFrameNumbers('robDead', { start: 0, end: 3}),
+            framRate: 10,
+            repeat: -1,
+            duration: 600
+        })
+        this.anims.create({
+            key: 'robEnabling',
+            frames: this.anims.generateFrameNumbers('robEnabling', { start: 0, end: 4}),
+            framRate: 10,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'robHurt',
+            frames: this.anims.generateFrameNumbers('robHurt', { start: 0, end: 2}),
+            framRate: 10,
+            repeat: -1
+        })
+        this.anims.create({
+            key: 'robIdle',
+            frames: this.anims.generateFrameNumbers('robIdle', { start: 0, end: 4}),
+            framRate: 10,
+            repeat: -1,
+        })
+        this.anims.create({
+            key: 'robWalk',
+            frames: this.anims.generateFrameNumbers('robWalk', { start: 0, end: 7}),
+            framRate: 10,
+            repeat: -1,
+            duration: 600
+        })
+        this.anims.create({
+            key: 'robShutdown',
+            frames: this.anims.generateFrameNumbers('robShutdown', { start: 0, end: 4}),
+            framRate: 10,
+            repeat: -1
+        })
     }
 
     update(time, delta)
     {
         this.player.update(this.cursors, this.slash, this.shoot, time, delta, this.sparks)
+
+        this.foe.update(this.player)
     }
 }

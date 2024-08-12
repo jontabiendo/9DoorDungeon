@@ -99,26 +99,6 @@ export class MC extends Phaser.Physics.Arcade.Sprite
         this.attack()
     } else if (shoot.isDown && time > this.lastFired) {
       this.shoot(sparks, time)
-        // this.player.anims.play('shoot', true).once('animationcomplete', () => {
-        //     this.lastAttack = 4
-        //     // let start;
-        //     // if (this.facing === 'right') {
-        //     //     start = this.player.getRightCenter()
-        //     // } else {
-        //     //     start = this.player.getLeftCenter()
-        //     // }
-        //     // let newSpark = new Spark()
-        //     // this.sparks.add(new Spark())
-
-        //     const spark = this.sparks.get();
-
-        //     if (spark)
-        //     {
-        //         spark.shoot(this.player);
-
-        //         this.lastFired = time + 100;
-        //     }
-        // })
     }else if (!this.body.touching.down) {
         this.anims.play('falling', true)
     } else if (cursors.left.isDown || cursors.right.isDown) {

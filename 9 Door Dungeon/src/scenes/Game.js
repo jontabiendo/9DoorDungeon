@@ -78,6 +78,13 @@ export class Game extends Scene
                 frameHeight: 72
             }
         )
+        this.load.spritesheet('sparkHit',
+            'assets/effects/sparkHit.png',
+            {
+                frameWidth: 72,
+                frameHeight: 72
+            }
+        )
     }
 
     create ()
@@ -104,7 +111,6 @@ export class Game extends Scene
         this.player.body.offset.x = 50;
         this.player.body.offset.y = 70;
         
-        // this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravity(0, 300)
 
@@ -115,6 +121,30 @@ export class Game extends Scene
         this.slash = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
         this.slash.emitOnRepeat = true;
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+
+        this.sparks = this.physics.add.group({
+            classType: Spark,
+            // maxSize: 30,
+            allowGravity: false,
+            runChildUpdate: true
+        });
+
+        this.particle = this.add.particles(0, 0, 'sparkHit', {
+            alpha: { start: 0, end: 3 },
+            blendMode: Phaser.BlendModes.SCREEN,
+            frequency: -1,
+            lifespan: 200,
+            radial: false,
+            scale: { start: 1, end: 2, ease: 'Cubic.easeOut' }
+        })
+
+        this.physics.add.collider(this.sparks, platforms, (spark, platform) => {
+            const { x, y } = spark.body.center;
+            spark.disableBody(true, true)
+
+            this.particle.emitParticleAt(x, y)
+        })
+
 
         this.anims.create({
             key: 'run',
@@ -175,21 +205,16 @@ export class Game extends Scene
 
         this.anims.create({
             key:'spark',
-            frames: this.anims.generateFrameNumbers({ start: 0, end: 3}),
+            frames: this.anims.generateFrameNumbers('spark', { start: 0, end: 3}),
             frameRate: 10,
-            repeat: -1
+            // repeat: -1
+        })        
+
+        this.anims.create({
+            key: 'sparkHit',
+            frames: this.anims.generateFrameNumbers('sparkHit', { start: 0, end: 3}),
+            frameRate: 10,
         })
-
-        this.sparks = this.physics.add.group({
-            classType: Spark,
-            // maxSize: 30,
-            allowGravity: false,
-            runChildUpdate: true
-        });
-        // let testSpark = new Spark(this, 400, 300, 'spark').setVelocityX(this.facing === 'left' ? -500:500)
-        // this.sparks.add(testSpark)
-
-        this.physics.add.collider(this.sparks, platforms)
     }
 
 
@@ -212,23 +237,6 @@ export class Game extends Scene
         } else if (this.shoot.isDown && time > this.lastFired) {
             this.player.anims.play('shoot', true).once('animationcomplete', () => {
                 this.lastAttack = 4
-                // let start;
-                // if (this.facing === 'right') {
-                //     start = this.player.getRightCenter()
-                // } else {
-                //     start = this.player.getLeftCenter()
-                // }
-                // let newSpark = new Spark()
-                // this.sparks.add(new Spark())
-
-                // const spark = this.sparks.get();
-
-                // if (spark)
-                // {
-                //     spark.shoot(this.player);
-
-                //     this.lastFired = time + 100;
-                // }
             })
         }else if (!this.player.body.touching.down) {
             this.player.anims.play('falling', true)

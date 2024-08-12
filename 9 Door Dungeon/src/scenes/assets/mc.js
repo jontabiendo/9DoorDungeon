@@ -4,9 +4,6 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   {
     super(scene, x, y, key)
     scene.add.existing(this);
-    // this.setSize(30, 55);
-    // this.body.offset.x = 50;
-    // this.body.offset.y = 70;
     this.facing = 'right';
     this.lastAttack = 4;
     this.lastFired = 0;
@@ -20,14 +17,12 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   moveRight() {
     this.flipX = false;
     this.body.setVelocityX(400)
-    // this.anims.play('run', true)
     this.facing = 'right'
   }
 
   moveLeft() {
     this.flipX = true;
     this.body.setVelocityX(-400)
-    // this.anims.play('run', true)
     this.facing = 'left'
   }
 

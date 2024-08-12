@@ -4,24 +4,29 @@ export class Spark extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, texture)
 
     this.speed = 700
-    this.lifespan = 1000
+    this.lifespan = 500
     this.setScale(1)
   }
+
   shoot (x, y, facing)
   {
-    this.lifespan = 1000;
+    this.lifespan = 500;
 
     this.setActive(true);
     this.setVisible(true);
     this.setPosition(x - 15, y + 30);
+    this.setSize(10, 10)
+    this.body.offset.x = 30
+    this.body.offset.y = 30
 
     this.body.velocity.x = facing === 'left'? -1000: 1000;
     this.body.velocity.y = 0;
   }
 
-  update ()
+  update (delta)
   {
-    this.lifespan -= devicePixelRatio;
+    // this.lifespan -= 10;
+    this.anims.play('spark', true)
 
     if (this.lifespan <= 0)
     {

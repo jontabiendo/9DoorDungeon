@@ -7,7 +7,11 @@ export class Game extends Scene
         super('Game');
         this.player,
         this.cursors,
-        this.attack
+        this.slash
+        this.shoot
+        this.lastAttack = 3
+        this.sparks
+        this.facing = 'right'
     }
 
     preload()
@@ -31,8 +35,29 @@ export class Game extends Scene
                 frameHeight: 128
             }
         )
-        this.load.spritesheet('mainAttack', 
+        this.load.spritesheet('attack1', 
             'assets/characterAssets/main/Attack_1.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        );
+        this.load.spritesheet('attack2', 
+            'assets/characterAssets/main/Attack_2.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        );
+        this.load.spritesheet('attack3', 
+            'assets/characterAssets/main/Attack_3.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        );
+        this.load.spritesheet('attack4', 
+            'assets/characterAssets/main/Attack_4.png',
             {
                 frameWidth: 128,
                 frameHeight: 128
@@ -43,6 +68,13 @@ export class Game extends Scene
             {
                 frameWidth: 128,
                 frameHeight: 128
+            }
+        )
+        this.load.spritesheet('spark',
+            'assets/effects/spark-.png',
+            {
+                frameWidth: 72,
+                frameHeight: 72
             }
         )
     }
@@ -68,7 +100,6 @@ export class Game extends Scene
         this.player.setSize(30, 55)
         this.player.body.offset.x = 50;
         this.player.body.offset.y = 70;
-
         
         // this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
@@ -78,8 +109,16 @@ export class Game extends Scene
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        this.attack = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-        // console.log(Phaser.Input.Keyboard.Key)
+        this.slash = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        this.slash.emitOnRepeat = true;
+        this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+
+        this.sparks = this.physics.add.group();
+        let testSpark = this.sparks.create(400, 300, 'spark').setSize(10, 10)
+        // testSpark.
+
+        this.physics.add.collider(this.player, this.sparks)
+        this.physics.add.collider(this.sparks, platforms)
 
         this.anims.create({
             key: 'run',
@@ -115,63 +154,96 @@ export class Game extends Scene
         })
 
         this.anims.create({
-            key: 'attack',
-            frames: this.anims.generateFrameNumbers('mainAttack', { start: 0, end: 5}),
+            key: 'attack1',
+            frames: this.anims.generateFrameNumbers('attack1', { start: 0, end: 4}),
+            frameRate: 10
+        })
+
+        this.anims.create({
+            key: 'attack2',
+            frames: this.anims.generateFrameNumbers('attack2', { start: 0, end: 2}),
+            frameRate: 10
+        })
+
+        this.anims.create({
+            key: 'attack3',
+            frames: this.anims.generateFrameNumbers('attack3', { start: 0, end: 2}),
+            frameRate: 10
+        })
+
+        this.anims.create({
+            key: 'shoot',
+            frames: this.anims.generateFrameNumbers('attack4', { start: 0, end: 9}),
+            frameRate: 10
+        })
+
+        this.anims.create({
+            key:'spark',
+            frames: this.anims.generateFrameNumbers({ start: 0, end: 3}),
             frameRate: 10,
             repeat: -1
         })
+    }
 
-        // this.input.once('pointerdown', () => {
+    movement() {
+        if (this.cursors.left.isDown) {
+            this.player.setVelocityX(-160);
+            this.facing = 'left'
+        } else if (this.cursors.right.isDown){
+            this.player.setAccelerationX(160);
+            this.facing = 'right'
+        } else {
+            this.player.setVelocityX(0);
+        }
+    
+        if (this.cursors.up.isDown && this.player.body.touching.down){
+            this.player.setVelocityY(-330);
+        }
+    }
 
-        //     this.scene.start('GameOver');
-
-        // });
+    animate() {
+        if (this.slash.isDown) {
+            if (this.lastAttack === 3 || this.lastAttack === 4) {
+                this.player.anims.play('attack1', true).once('animationcomplete', () => {
+                    this.lastAttack = 1
+                })
+            } else if (this.lastAttack === 1) {
+                this.player.anims.play('attack2', true).once('animationcomplete', () => {
+                    this.lastAttack = 2
+                })
+            } else {
+                this.player.anims.play('attack3', true).once('animationcomplete', () => {
+                    this.lastAttack = 3
+                })
+            }
+        } else if (this.shoot.isDown) {
+            this.player.anims.play('shoot', true).once('animationcomplete', () => {
+                this.lastAttack = 4
+                let start;
+                if (this.facing === 'right') {
+                    start = this.player.getRightCenter()
+                } else {
+                    start = this.player.getLeftCenter()
+                }
+                this.sparks.create(start.x - 15, start.y + 25, 'spark').setSize(10, 10)
+            })
+        }else if (!this.player.body.touching.down) {
+            this.player.anims.play('falling', true)
+        } else if (this.cursors.left.isDown || this.cursors.right.isDown) {
+            this.player.anims.play('run', true)
+        } else {
+            this.player.anims.play('idle', true)
+        }
     }
 
     update()
     {
-        // console.log(this.player)
-        if (this.player.body.velocity.x < 0) {
+        if (this.facing === 'left') {
             this.player.setFlipX(true)
         } else {
             this.player.setFlipX(false)
         }
-
-        if (this.cursors.left.isDown)
-        {
-            this.player.setVelocityX(-160);
-
-            this.player.anims.play('run', true);
-
-        } else if (this.cursors.right.isDown)
-        {
-            this.player.setAccelerationX(160);
-
-            this.player.anims.play('run', true);
-
-        } else
-        {
-            this.player.setVelocityX(0);
-
-            this.player.anims.play('idle');
-
-        }
-
-        if (this.cursors.up.isDown && this.player.body.touching.down)
-        {
-            this.player.setVelocityY(-330);
-
-            this.player.anims.play('jump')
-        }
-
-        if (!this.player.body.touching.down)
-        {
-            this.player.anims.play('falling')
-        }
-
-        // console.log(this.events)
-        if (this.attack.isDown) {
-            this.player.anims.play('attack')
-        }
+        this.movement()
+        this.animate()
     }
 }

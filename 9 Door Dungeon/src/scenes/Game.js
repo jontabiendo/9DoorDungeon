@@ -1,4 +1,6 @@
 import { FX, Scene } from 'phaser';
+import { Spark } from './assets/spark';
+import { MC } from './assets/mc';
 
 export class Game extends Scene
 {
@@ -12,6 +14,7 @@ export class Game extends Scene
         this.lastAttack = 3
         this.sparks
         this.facing = 'right'
+        this.lastFired = 0;
     }
 
     preload()
@@ -96,14 +99,16 @@ export class Game extends Scene
         platforms.create(50, 250, 'castleGround');
         platforms.create(750, 220, 'castleGround');
         
-        this.player = this.physics.add.sprite(100, 100, 'idle');
+        this.player = new MC(this, 100, 100, 'MC');
+        
+        this.physics.add.existing(this.player)
         this.player.setSize(30, 55)
         this.player.body.offset.x = 50;
         this.player.body.offset.y = 70;
         
         // this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
-        this.player.body.setGravity(300)
+        this.player.body.setGravity(0, 300)
 
         this.physics.add.collider(this.player, platforms);
 
@@ -112,13 +117,6 @@ export class Game extends Scene
         this.slash = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
         this.slash.emitOnRepeat = true;
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-
-        this.sparks = this.physics.add.group();
-        let testSpark = this.sparks.create(400, 300, 'spark').setSize(10, 10)
-        // testSpark.
-
-        this.physics.add.collider(this.player, this.sparks)
-        this.physics.add.collider(this.sparks, platforms)
 
         this.anims.create({
             key: 'run',
@@ -183,25 +181,22 @@ export class Game extends Scene
             frameRate: 10,
             repeat: -1
         })
+
+        this.sparks = this.physics.add.group({
+            classType: Spark,
+            // maxSize: 30,
+            allowGravity: false,
+            runChildUpdate: true
+        });
+        // let testSpark = new Spark(this, 400, 300, 'spark').setVelocityX(this.facing === 'left' ? -500:500)
+        // this.sparks.add(testSpark)
+
+        this.physics.add.collider(this.sparks, platforms)
     }
 
-    movement() {
-        if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-160);
-            this.facing = 'left'
-        } else if (this.cursors.right.isDown){
-            this.player.setAccelerationX(160);
-            this.facing = 'right'
-        } else {
-            this.player.setVelocityX(0);
-        }
-    
-        if (this.cursors.up.isDown && this.player.body.touching.down){
-            this.player.setVelocityY(-330);
-        }
-    }
 
-    animate() {
+
+    animate(time, delta) {
         if (this.slash.isDown) {
             if (this.lastAttack === 3 || this.lastAttack === 4) {
                 this.player.anims.play('attack1', true).once('animationcomplete', () => {
@@ -216,16 +211,26 @@ export class Game extends Scene
                     this.lastAttack = 3
                 })
             }
-        } else if (this.shoot.isDown) {
+        } else if (this.shoot.isDown && time > this.lastFired) {
             this.player.anims.play('shoot', true).once('animationcomplete', () => {
                 this.lastAttack = 4
-                let start;
-                if (this.facing === 'right') {
-                    start = this.player.getRightCenter()
-                } else {
-                    start = this.player.getLeftCenter()
+                // let start;
+                // if (this.facing === 'right') {
+                //     start = this.player.getRightCenter()
+                // } else {
+                //     start = this.player.getLeftCenter()
+                // }
+                // let newSpark = new Spark()
+                // this.sparks.add(new Spark())
+
+                const spark = this.sparks.get();
+
+                if (spark)
+                {
+                    spark.shoot(this.player);
+
+                    this.lastFired = time + 100;
                 }
-                this.sparks.create(start.x - 15, start.y + 25, 'spark').setSize(10, 10)
             })
         }else if (!this.player.body.touching.down) {
             this.player.anims.play('falling', true)
@@ -236,14 +241,10 @@ export class Game extends Scene
         }
     }
 
-    update()
+    update(time, delta)
     {
-        if (this.facing === 'left') {
-            this.player.setFlipX(true)
-        } else {
-            this.player.setFlipX(false)
-        }
-        this.movement()
-        this.animate()
+        // this.movement()
+        this.player.update(this.cursors, this.slash, this.shoot, time, delta)
+        // this.player.animate(time, delta, this.slash, this.shoot)
     }
 }

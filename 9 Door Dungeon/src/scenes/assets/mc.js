@@ -20,14 +20,14 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   moveRight() {
     this.flipX = false;
     this.body.setVelocityX(400)
-    this.anims.play('run', true)
+    // this.anims.play('run', true)
     this.facing = 'right'
   }
 
   moveLeft() {
     this.flipX = true;
     this.body.setVelocityX(-400)
-    this.anims.play('run', true)
+    // this.anims.play('run', true)
     this.facing = 'left'
   }
 
@@ -36,25 +36,46 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   }
 
   attack() {
-    switch (this.lastAttack) {
-      case 1:
-        this.anims.play('attack2').once('animationcomplete', () => {
-          this.lastAttack = 2
-        })
-      case 2:
-        this.anims.play('attack3').once('animationcomplete', () => {
-          this.lastAttack = 3
-        })
-      default:
-        this.anims.play('attack1').once('animationcomplete', () => {
-          this.lastAttack = 1
-        })            
+    if (this.lastAttack === 1) {
+      this.anims.play('attack2', true).once('animationcomplete', () => {
+        this.lastAttack = 2
+      })
+    } else if (this.lastAttack === 2) {
+      this.anims.play('attack3', true).once('animationcomplete', () => {
+        this.lastAttack = 3
+      })
+    } else {
+      this.anims.play('attack1', true).once('animationcomplete', () => {
+        this.lastAttack = 1
+      })
     }
   }
 
-  shoot() {
+  fastFall() {
+    this.body.setVelocityY(500)
+  }
+
+  shoot(sparks, time) {
     this.anims.play('shoot', true).once('animationcomplete', () => {
       this.lastAttack = 4;
+
+      let x, y;
+      if (this.facing === 'left') {
+        x = this.body.x
+        y = this.body.y
+      } else {
+        x = this.body.x
+        y = this.body.y
+      };
+
+      const spark = sparks.get();
+
+      if (spark)
+      {
+        spark.shoot(x, y, this.facing);
+
+        this.lastFired = time + 100;
+      }
     })
   }
 
@@ -72,13 +93,17 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     if (cursors.up.isDown && this.body.touching.down){
         this.jump();
     }
+
+    if (cursors.down.isDown) {
+      this.fastFall();
+    }
   }
 
-  animate(cursors, slash, shoot, time, delta) {
+  animate(cursors, slash, shoot, time, delta, sparks) {
     if (slash.isDown) {
         this.attack()
     } else if (shoot.isDown && time > this.lastFired) {
-      this.shoot()
+      this.shoot(sparks, time)
         // this.player.anims.play('shoot', true).once('animationcomplete', () => {
         //     this.lastAttack = 4
         //     // let start;
@@ -108,13 +133,13 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     }
 }  
   
-  update(cursors, slash, shoot, time, delta) {
+  update(cursors, slash, shoot, time, delta, sparks) {
     if (this.facing === 'left') {
       this.setFlipX(true)
     } else {
       this.setFlipX(false)
     }
     this.movement(cursors)
-    this.animate(cursors, slash, shoot, time, delta)
+    this.animate(cursors, slash, shoot, time, delta, sparks)
   }
 }

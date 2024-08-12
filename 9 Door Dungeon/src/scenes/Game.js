@@ -11,9 +11,7 @@ export class Game extends Scene
         this.cursors,
         this.slash
         this.shoot
-        this.lastAttack = 3
         this.sparks
-        this.facing = 'right'
         this.lastFired = 0;
     }
 
@@ -223,14 +221,14 @@ export class Game extends Scene
                 // let newSpark = new Spark()
                 // this.sparks.add(new Spark())
 
-                const spark = this.sparks.get();
+                // const spark = this.sparks.get();
 
-                if (spark)
-                {
-                    spark.shoot(this.player);
+                // if (spark)
+                // {
+                //     spark.shoot(this.player);
 
-                    this.lastFired = time + 100;
-                }
+                //     this.lastFired = time + 100;
+                // }
             })
         }else if (!this.player.body.touching.down) {
             this.player.anims.play('falling', true)
@@ -243,8 +241,6 @@ export class Game extends Scene
 
     update(time, delta)
     {
-        // this.movement()
-        this.player.update(this.cursors, this.slash, this.shoot, time, delta)
-        // this.player.animate(time, delta, this.slash, this.shoot)
+        this.player.update(this.cursors, this.slash, this.shoot, time, delta, this.sparks)
     }
 }

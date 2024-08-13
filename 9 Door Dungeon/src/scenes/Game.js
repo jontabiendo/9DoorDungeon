@@ -80,76 +80,133 @@ export class Game extends Scene
                 frameHeight: 128
             }
         )
-        this.load.spritesheet('slash1',
+        this.load.spritesheet('slash1.1',
             'assets/effects/slashes/6/1.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
-        this.load.spritesheet('slash2',
+        this.load.spritesheet('slash1.2',
             'assets/effects/slashes/6/2.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
-        this.load.spritesheet('slash3',
+        this.load.spritesheet('slash1.3',
             'assets/effects/slashes/6/3.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
-        this.load.spritesheet('slash4',
+        this.load.spritesheet('slash1.4',
             'assets/effects/slashes/6/4.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
-        this.load.spritesheet('slash5',
+        this.load.spritesheet('slash1.5',
             'assets/effects/slashes/6/5.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
-        this.load.spritesheet('slash6',
+        this.load.spritesheet('slash1.6',
             'assets/effects/slashes/6/6.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
-        this.load.spritesheet('slash7',
+        this.load.spritesheet('slash1.7',
             'assets/effects/slashes/6/7.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
-        this.load.spritesheet('slash8',
+        this.load.spritesheet('slash1.8',
             'assets/effects/slashes/6/8.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
-        this.load.spritesheet('slash9',
+        this.load.spritesheet('slash1.9',
             'assets/effects/slashes/6/9.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )        
-        this.load.spritesheet('slash10',
+        this.load.spritesheet('slash1.10',
             'assets/effects/slashes/6/10.png',
             {
                 frameWidth: 496,
                 frameHeight: 496
             }
         )
+        this.load.spritesheet('slash2.1',
+            'assets/effects/slashes/4/1.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash2.2',
+            'assets/effects/slashes/4/2.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash2.3',
+            'assets/effects/slashes/4/3.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash2.4',
+            'assets/effects/slashes/4/4.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash2.5',
+            'assets/effects/slashes/4/5.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash2.6',
+            'assets/effects/slashes/4/6.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash2.7',
+            'assets/effects/slashes/4/7.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash2.8',
+            'assets/effects/slashes/4/8.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+
         this.load.spritesheet('spark',
             'assets/effects/sparks/spark-.png',
             {
@@ -269,10 +326,19 @@ export class Game extends Scene
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.slash = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        console.log(this.slash)
+        // this.slash.setEmitOnRepeat(false)
         this.slash.emitOnRepeat = true;
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
 
         this.sparks = this.physics.add.group({
+            classType: Spark,
+            // maxSize: 30,
+            allowGravity: false,
+            runChildUpdate: true
+        });
+
+        this.enemySparks = this.physics.add.group({
             classType: Spark,
             // maxSize: 30,
             allowGravity: false,
@@ -315,7 +381,7 @@ export class Game extends Scene
 
         this.slashes = this.physics.add.group({
             classType: SlashSprite,
-            // maxSize: 30,
+            maxSize: 10,
             allowGravity: false,
             runChildUpdate: true
         });
@@ -388,21 +454,37 @@ export class Game extends Scene
         })
 
         this.anims.create({
-            key: 'mcSlash',
+            key: 'mcSlash3',
             frames: [
-                { key: 'slash1'},
-                { key: 'slash2'},
-                { key: 'slash3'},
-                { key: 'slash4'},
-                { key: 'slash5'},
-                { key: 'slash6'},
-                { key: 'slash7'},
-                { key: 'slash8'},
-                { key: 'slash9'},
-                { key: 'slash10'}
+                { key: 'slash1.1'},
+                { key: 'slash1.2'},
+                { key: 'slash1.3'},
+                { key: 'slash1.4'},
+                { key: 'slash1.5'},
+                { key: 'slash1.6'},
+                { key: 'slash1.7'},
+                { key: 'slash1.8'},
+                { key: 'slash1.9'},
+                { key: 'slash1.10'}
             ],
             frameRate: 40,
             duration: 50
+        })
+
+        this.anims.create({
+            key: 'mcSlash2',
+            frames: [
+                { key: 'slash2.1'},
+                { key: 'slash2.2'},
+                { key: 'slash2.3'},
+                { key: 'slash2.4'},
+                { key: 'slash2.5'},
+                { key: 'slash2.6'},
+                { key: 'slash2.7'},
+                { key: 'slash2.8'}
+            ],
+            frameRate: 100,
+            duration: 10
         })
 
         this.anims.create({

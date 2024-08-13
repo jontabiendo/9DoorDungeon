@@ -23,19 +23,20 @@ export class Spark extends Phaser.Physics.Arcade.Sprite {
     this.body.velocity.x = facing === 'left'? -1000: 1000;
     this.body.velocity.y = 0;
 
-    console.log(this)
+    // console.log(this)
   }
 
   update (delta)
   {
-    // this.lifespan -= 10;
+    this.lifespan -= 10;
     this.anims.play('spark', true)
 
     if (this.lifespan <= 0)
     {
+      // this.destroy()
       this.setActive(false);
       this.setVisible(false);
-      this.body.stop();
+      // this.body.stop();
     }
   }
 

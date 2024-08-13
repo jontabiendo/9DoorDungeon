@@ -5,7 +5,7 @@ export class SlashSprite extends Phaser.Physics.Arcade.Sprite
     this.setScale(0.2)
   }
 
-  animate(facing) {
+  animate(facing, slash) {
     this.scene.add.existing(this);
 
     // this.setSize(50, 50)
@@ -18,10 +18,29 @@ export class SlashSprite extends Phaser.Physics.Arcade.Sprite
       this.setFlipX(false)  
     } 
 
-    this.anims.playAfterDelay('mcSlash', true, 100).once('animationcomplete', () => {
-      this.setActive(false);
-      this.setVisible(false);
-    })    
+    if (slash === 1) {
+      this.setRotation(-45)
+      this.setFlipY(true)
+      this.setScale(0.15)
+      this.y += 20
+      this.anims.playAfterDelay('mcSlash2', 250).once('animationcomplete', () => {
+        this.setActive(false);
+        this.setVisible(false);
+      })
+    } else if (slash === 2) {
+      this.setRotation(90)
+      this.setScale(0.15)
+      this.y += 20
+      this.anims.play('mcSlash2', true).once('animationcomplete', () => {
+        this.setActive(false);
+        this.setVisible(false);
+      })
+    } else if (slash === 3) {
+      this.anims.play('mcSlash3', true).once('animationcomplete', () => {
+        this.setActive(false);
+        this.setVisible(false);
+      })
+    }
   }
 
   onComplete() {

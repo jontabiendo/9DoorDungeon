@@ -7,10 +7,11 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     super(scene, x, y, key)
     scene.add.existing(this);
     this.facing = 'right';
-    this.lastAttack = 4;
+    this.lastAttack = 3;
     this.lastFired = 0;
     this.hp = 1000;
     this.dmgMod = 1
+    this.charging = false
   }
 
   idle() {
@@ -34,22 +35,25 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   }
 
   attack() {
-    let slash = new SlashSprite(this.scene, this.x, this.y, 'mcSlash')
+    let slash1 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash1')
+    let slash2 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash2')
 
-    slash.animate(this.facing)
     if (this.lastAttack === 1) {
+      slash2.animate(this.facing, 2)
       this.anims.play('attack2', true).once('animationcomplete', () => {
         this.lastAttack = 2
         // slash.disableBody(true, true)
 
       })
     } else if (this.lastAttack === 2) {
+      slash2.animate(this.facing, 3)
       this.anims.play('attack3', true).once('animationcomplete', () => {
         this.lastAttack = 3
         // slash.disableBody(true, true)
 
       })
     } else {
+      slash1.animate(this.facing, 1)
       this.anims.play('attack1', true).once('animationcomplete', () => {
         this.lastAttack = 1
         // slash.disableBody(true, true)
@@ -64,27 +68,31 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   }
 
   shoot(sparks, time) {
-    this.anims.play('shoot', true).once('animationcomplete', () => {
-      this.lastAttack = 4;
+    let start = Date.now()
 
-      let x, y;
-      if (this.facing === 'left') {
-        x = this.body.x
-        y = this.body.y
-      } else {
-        x = this.body.x
-        y = this.body.y
-      };
-
-      const spark = sparks.get();
-
-      if (spark)
-      {
-        spark.shoot(x, y, this.facing);
-
-        this.lastFired = time + 100;
-      }
-    })
+      this.anims.play('shoot', true).once('animationcomplete', () => {
+        this.lastAttack = 4;
+        
+        let x, y;
+        if (this.facing === 'left') {
+          x = this.body.x
+          y = this.body.y
+        } else {
+          x = this.body.x
+          y = this.body.y
+        };
+        
+        const spark = sparks.get();
+        console.log(spark)
+        
+        if (spark)
+          {
+            spark.shoot(x, y, this.facing);
+            
+            this.lastFired = time + 150;
+          }
+        })
+      console.log("time:", Date.now() - start)
   }
 
   getHit(damage){
@@ -114,9 +122,9 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   }
 
   animate(cursors, slash, shoot, time, delta, sparks) {
-    if (slash.isDown) {
+    if (slash._justDown) {
         this.attack()
-    } else if (shoot.isDown && time > this.lastFired) {
+    } else if (shoot.isDown && time > this.lastFired && !this.charging) {
       this.shoot(sparks, time)
     }else if (!this.body.touching.down) {
         this.anims.play('falling', true)

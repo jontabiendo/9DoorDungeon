@@ -8,6 +8,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     this.lastAttack = 4;
     this.lastFired = 0;
     this.hp = 1000;
+    this.dmgMod = 1
   }
 
   idle() {
@@ -72,6 +73,12 @@ export class MC extends Phaser.Physics.Arcade.Sprite
         this.lastFired = time + 100;
       }
     })
+  }
+
+  getHit(damage){
+    this.anims.play('hurt')
+    this.hp -= damage * this.dmgMod;
+    console.log('IM HIT', this.hp)
   }
 
   movement(cursors) {

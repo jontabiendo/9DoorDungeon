@@ -72,15 +72,92 @@ export class Game extends Scene
                 frameHeight: 128
             }
         )
+        this.load.spritesheet('hurt',
+            'assets/characterAssets/main/Hurt.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('slash1',
+            'assets/effects/slashes/6/1.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash2',
+            'assets/effects/slashes/6/2.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash3',
+            'assets/effects/slashes/6/3.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash4',
+            'assets/effects/slashes/6/4.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash5',
+            'assets/effects/slashes/6/5.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash6',
+            'assets/effects/slashes/6/6.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash7',
+            'assets/effects/slashes/6/7.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash8',
+            'assets/effects/slashes/6/8.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
+        this.load.spritesheet('slash9',
+            'assets/effects/slashes/6/9.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )        
+        this.load.spritesheet('slash10',
+            'assets/effects/slashes/6/10.png',
+            {
+                frameWidth: 496,
+                frameHeight: 496
+            }
+        )
         this.load.spritesheet('spark',
-            'assets/effects/spark-.png',
+            'assets/effects/sparks/spark-.png',
             {
                 frameWidth: 72,
                 frameHeight: 72
             }
         )
         this.load.spritesheet('sparkHit',
-            'assets/effects/sparkHit.png',
+            'assets/effects/sparks/sparkHit.png',
             {
                 frameWidth: 72,
                 frameHeight: 72
@@ -228,6 +305,27 @@ export class Game extends Scene
         this.foe.body.setGravity(0, 300)
         this.physics.add.collider(this.foe, platforms)
 
+        this.physics.add.collider(this.sparks, this.foe, (foe, spark) => {
+            const { x, y } = spark.body.center;
+            spark.disableBody(true, true);
+
+            this.particle.emitParticleAt(x, y)
+        })
+
+        let slash = this.physics.add.sprite(this.player.x, this.player.y, 'slash')
+        slash.body.setGravity(0, 0)
+
+        // this.physics.add.collider(this.foe, slash, (foe, slash) => {
+        //     slash.disableBody(true, true)
+
+        //     foe.getHit(100)
+        // })
+
+        new Phaser.Physics.Arcade.Collider(Phaser.Physics.Arcade.World, true, slash, this.foe, (slash, foe) => {
+            slash.disableBody(true, true)
+
+            foe.getHit(100)
+        })
 
         this.anims.create({
             key: 'run',
@@ -284,6 +382,30 @@ export class Game extends Scene
             key: 'shoot',
             frames: this.anims.generateFrameNumbers('attack4', { start: 0, end: 9}),
             frameRate: 10
+        })
+
+        this.anims.create({
+            key: 'hurt',
+            frames: this.anims.generateFrameNumbers('hurt', { start: 0, end: 1}),
+            frameRate: 10
+        })
+
+        this.anims.create({
+            key: 'mcSlash',
+            frames: [
+                { key: 'slash1'},
+                { key: 'slash2'},
+                { key: 'slash3'},
+                { key: 'slash4'},
+                { key: 'slash5'},
+                { key: 'slash6'},
+                { key: 'slash7'},
+                { key: 'slash8'},
+                { key: 'slash9'},
+                { key: 'slash10'}
+            ],
+            frameRate: 10,
+            duration: 100
         })
 
         this.anims.create({
@@ -367,8 +489,8 @@ export class Game extends Scene
 
     update(time, delta)
     {
-        this.player.update(this.cursors, this.slash, this.shoot, time, delta, this.sparks)
+        this.player.update(this.cursors, this.slash, this.shoot, time, delta, this.sparks, this.meleeWeapons)
 
-        this.foe.update(this.player)
+        this.foe.update(this.player, this.sparks, time, this.meleeWeapons)
     }
 }

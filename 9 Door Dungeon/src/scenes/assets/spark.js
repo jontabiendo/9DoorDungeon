@@ -1,11 +1,12 @@
 export class Spark extends Phaser.Physics.Arcade.Sprite {
 
-  constructor(scene, x, y, texture) {
+  constructor(scene, x, y, texture, damage) {
     super(scene, x, y, texture)
 
     this.speed = 700
     this.lifespan = 500
     this.setScale(1)
+    this.damage, damage
   }
 
   shoot (x, y, facing)

@@ -7,9 +7,11 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     this.facing = 'left';
     this.lastAttack;
     this.hp = 1000;
+    this.dmgMod = 1
     this.isFrenzy = false;
     this.gunCD = 0;
     this.isLocked = false;
+    this.swordBox;
   }
 
   idle() {
@@ -30,57 +32,70 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     this.facing = 'left'
   }
 
-  attack() {
-    // console.log(this.lastAttack)
+  attack(meleeWeapon) {
+    let { x, y } = this.facing === 'left' ? this.getLeftCenter() : this.getRightCenter()
+
+    // const sword = meleeWeapon.get()
+    // sword.width = 100
+    // sword.height = 50
+    // console.log(sword)
+
     if (this.lastAttack === 1) {
       this.anims.play('robAtt2', true).once('animationcomplete', () => {
         this.lastAttack = 2
         this.isLocked = false
-
+        // sword.slash(x - 100, y, this.facing)
       })
     } else if (this.lastAttack === 2) {
       this.anims.play('robAtt3', true).once('animationcomplete', () => {
         this.lastAttack = 3
         this.isLocked = false
-
+        // sword.slash(x, y, this.facing)
       })
     } else {
       this.anims.play('robAtt1', true).once('animationcomplete', () => {
         this.lastAttack = 1
         this.isLocked = false
+        // sword.slash(x, y, this.facing)
       })
     }
+    // console.log(sword)
   }
 
-  shoot() {
+  shoot(sparks, time) {
     this.gunCD = 200
     this.anims.play('robShoot', true).once('animationcomplete', () => {
       this.lastAttack = 4;
 
-      // let x, y;
-      // if (this.facing === 'left') {
-      //   x = this.body.x
-      //   y = this.body.y
-      // } else {
-      //   x = this.body.x
-      //   y = this.body.y
-      // };
+      let x, y;
+      if (this.facing === 'left') {
+        x = this.body.x
+        y = this.body.y
+      } else {
+        x = this.body.x
+        y = this.body.y
+      };
 
-      // const spark = sparks.get();
+      const spark = sparks.get();
 
-      // if (spark)
-      // {
-      //   spark.shoot(x, y, this.facing);
+      if (spark)
+      {
+        spark.shoot(x, y, this.facing);
 
-      //   this.lastFired = time + 100;
-      // }
+        this.lastFired = time + 100;
+      }
 
       this.isLocked = false
     })
   }
 
+  getHit(damage) {
+    this.hp -= damage * this.dmgMod;
+    this.anims.play('robHurt', true)
+    console.log('ROB HIT', this.hp)
+  }
+
   animate(command) {
-    console.log(command, this.gunCD)
     switch (command) {
       case 'attack':
         this.attack();
@@ -95,32 +110,25 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     }
   }
 
-  chooseCommand(player) {
+  chooseCommand(player, sparks, time, meleeWeapon) {
     let bigX = Math.max(this.x, player.x)
     let smallX = Math.min(this.x, player.x)
     if (bigX - smallX < 60) {
-      console.log('attack', this.gunCD)
       this.isLocked = true
       this.setVelocityX(0)
-      this.attack();
+      this.attack(meleeWeapon);
     } else if (bigX - smallX > 100 && this.gunCD <= 0) {
-      console.log('shoot', this.gunCD)
       this.isLocked = true
       this.setVelocityX(0)
-
-      this.shoot();
+      this.shoot(sparks, time);
     } else if (player.x < this.x) {
-      console.log('left', this.gunCD)
-
       this.moveLeft();
     } else if (player.body.x > this.body.x) {
-      console.log('right', this.gunCD)
-
       this.moveRight();
     }
   }
 
-  update(player, delta) {
+  update(player, sparks, time, meleeWeapon) {
     if (this.facing === 'left') {
       this.setFlipX(true)
     } else {
@@ -132,7 +140,8 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     }
 
     if (!this.isLocked) {
-      this.chooseCommand(player)
+      this.chooseCommand(player, sparks, time, meleeWeapon)
+      // this.idle()
     }
 
   }

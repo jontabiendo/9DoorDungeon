@@ -2,6 +2,7 @@ import { FX, Scene } from 'phaser';
 import { Spark } from './assets/spark';
 import { MC } from './assets/mc';
 import { Robot } from './assets/robot'
+import { SlashSprite } from './assets/slashSprite';
 
 export class Game extends Scene
 {
@@ -312,19 +313,15 @@ export class Game extends Scene
             this.particle.emitParticleAt(x, y)
         })
 
-        let slash = this.physics.add.sprite(this.player.x, this.player.y, 'slash')
-        slash.body.setGravity(0, 0)
+        this.slashes = this.physics.add.group({
+            classType: SlashSprite,
+            // maxSize: 30,
+            allowGravity: false,
+            runChildUpdate: true
+        });
 
-        // this.physics.add.collider(this.foe, slash, (foe, slash) => {
-        //     slash.disableBody(true, true)
-
-        //     foe.getHit(100)
-        // })
-
-        new Phaser.Physics.Arcade.Collider(Phaser.Physics.Arcade.World, true, slash, this.foe, (slash, foe) => {
-            slash.disableBody(true, true)
-
-            foe.getHit(100)
+        this.physics.add.collider(this.slashes, this.foe, (foe, slash) => {
+            console.log(foe)
         })
 
         this.anims.create({
@@ -404,8 +401,8 @@ export class Game extends Scene
                 { key: 'slash9'},
                 { key: 'slash10'}
             ],
-            frameRate: 10,
-            duration: 100
+            frameRate: 40,
+            duration: 50
         })
 
         this.anims.create({

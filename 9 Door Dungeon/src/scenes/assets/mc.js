@@ -1,3 +1,5 @@
+import { SlashSprite } from "./slashSprite";
+
 export class MC extends Phaser.Physics.Arcade.Sprite
 {
   constructor (scene, x, y, key)
@@ -32,19 +34,29 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   }
 
   attack() {
+    let slash = new SlashSprite(this.scene, this.x, this.y, 'mcSlash')
+
+    slash.animate(this.facing)
     if (this.lastAttack === 1) {
       this.anims.play('attack2', true).once('animationcomplete', () => {
         this.lastAttack = 2
+        // slash.disableBody(true, true)
+
       })
     } else if (this.lastAttack === 2) {
       this.anims.play('attack3', true).once('animationcomplete', () => {
         this.lastAttack = 3
+        // slash.disableBody(true, true)
+
       })
     } else {
       this.anims.play('attack1', true).once('animationcomplete', () => {
         this.lastAttack = 1
+        // slash.disableBody(true, true)
+
       })
     }
+
   }
 
   fastFall() {

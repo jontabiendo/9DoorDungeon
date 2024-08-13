@@ -6,7 +6,7 @@ export class Spark extends Phaser.Physics.Arcade.Sprite {
     this.speed = 700
     this.lifespan = 500
     this.setScale(1)
-    this.damage, damage
+    this.damage =  damage
   }
 
   shoot (x, y, facing)
@@ -22,6 +22,8 @@ export class Spark extends Phaser.Physics.Arcade.Sprite {
 
     this.body.velocity.x = facing === 'left'? -1000: 1000;
     this.body.velocity.y = 0;
+
+    console.log(this)
   }
 
   update (delta)

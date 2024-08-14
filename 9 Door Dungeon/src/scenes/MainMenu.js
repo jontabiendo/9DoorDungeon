@@ -9,9 +9,9 @@ export class MainMenu extends Scene
 
     create ()
     {
-        this.add.image(400, 300, 'background');
+        this.add.image(400, 300, 'coverScreen');
 
-        this.add.image(400, 300, 'logo');
+        // this.add.image(400, 300, 'logo');
 
         this.add.text(400, 430, 'Main Menu', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',

@@ -3,27 +3,34 @@ import { Spark } from './assets/spark';
 import { MC, createMC } from './assets/mc';
 import { Robot } from './assets/robot'
 import { SlashSprite } from './assets/slashSprite';
+import { foe } from './assets/foe';
 
 export class Game extends Scene
 {
     constructor ()
     {
         super('Game');
-        this.player,
-        this.cursors,
-        this.slash
-        this.shoot
-        this.sparks
+        this.player;
+        this.cursors;
+        this.slash;
+        this.shoot;
+        this.sparks;
         this.lastFired = 0;
-        this.complete = false
-        this.roll = null
+        this.complete = false;
+        this.roll = null;
     }
 
     preload()
     {
         // assets
-        this.load.image('vampireCastle', 'assets/stages/vampire_castle.jpg');
+        this.load.image('ship', 'assets/stages/spaceship.jpg');
         this.load.image('castleGround', 'assets/platforms/wall_3.png');
+        this.load.image('metal_center', 'assets/platforms/metal_center.png'
+        )
+        this.load.image('metal_left', 'assets/platforms/metal_left.png'
+        )
+        this.load.image('metal_right', 'assets/platforms/metal_right.png'
+        )
 
         // sprites
         this.load.spritesheet('run',
@@ -77,6 +84,13 @@ export class Game extends Scene
         )
         this.load.spritesheet('hurt',
             'assets/characterAssets/main/Hurt.png',
+            {
+                frameWidth: 128,
+                frameHeight: 128
+            }
+        )
+        this.load.spritesheet('mcDie',
+            'assets/characterAssets/main/Dead.png',
             {
                 frameWidth: 128,
                 frameHeight: 128
@@ -298,20 +312,21 @@ export class Game extends Scene
 
     create ()
     {
-        this.add.image(400, 300, 'vampireCastle').setScale(0.75);
+
+        this.add.image(400, 300, 'ship').setScale(0.75);
         
         // platforms
         let platforms = this.physics.add.staticGroup();
         
-        let firstPlat = platforms.create(100, 600, 'castleGround');
-        platforms.create(250, 600, 'castleGround');
-        platforms.create(500, 600, 'castleGround');
-        platforms.create(700, 600, 'castleGround');
-        
-        platforms.create(600, 400, 'castleGround');
-        platforms.create(700, 400, 'castleGround');
-        platforms.create(50, 250, 'castleGround');
-        platforms.create(750, 220, 'castleGround');
+        platforms.create(0, 600, 'metal_left');
+        let centerPlatform = platforms.create(700, 600, 'metal_center')
+        centerPlatform.setScale(10, 0);
+        console.log(centerPlatform)
+        platforms.create(800, 600, 'metal_right');
+
+        for (let i = 0; i < 800; i += 16) {
+            platforms.create(i, 600, 'metal_center')
+        }
         
         let playerConfig = localStorage.getItem('MCPlayerData') || {}
         console.log(playerConfig)
@@ -370,6 +385,8 @@ export class Game extends Scene
 
         this.foe = new Robot(this, 500, 400, 'robot');
         this.foe.setScale(1.5)
+        foe.foe = 'robot'
+        foe.weapon = 'cannon'
 
         this.physics.add.existing(this.foe)
         this.foe.setSize(20, 60);
@@ -394,6 +411,14 @@ export class Game extends Scene
                 slashBox.colliderActive = false
             }
             this.physics.world.disable(slashBox)
+        })
+
+        this.physics.add.collider(this.foe.swordBox, this.player, (swordBox, player) => {
+            if (this.foe.swordBox.colliderActive) {
+                this.player.getHit(100)
+                swordBox.colliderActive = false
+            }
+            this.physics.world.disable(swordBox)
         })
 
         // this.slashes = this.physics.add.group({
@@ -467,6 +492,12 @@ export class Game extends Scene
         this.anims.create({
             key: 'hurt',
             frames: this.anims.generateFrameNumbers('hurt', { start: 0, end: 1}),
+            frameRate: 10
+        })
+
+        this.anims.create({
+            key: 'mcDie',
+            frames: this.anims.generateFrameNumbers('mcDie', { start : 0, end: 4}),
             frameRate: 10
         })
 
@@ -578,16 +609,17 @@ export class Game extends Scene
             key: 'robShutdown',
             frames: this.anims.generateFrameNumbers('robShutdown', { start: 0, end: 4}),
             framRate: 10,
-            repeat: -1
         })
     }
 
     update(time, delta)
     {
-        if (!this.complete) {
+        if (!this.complete && !this.player.dead) {
             this.player.update(this.cursors, this.slash, this.shoot, time, delta, this.sparks, this.meleeWeapons)
 
             this.foe.update(this.player, this.sparks, time, this.meleeWeapons)
+        } else if (this.player.dead && !this.foe.win) {
+            this.foe.victory()
         } else {
             if (this.spacebar.isDown && this.roll === null) {
                 this.showRoll()

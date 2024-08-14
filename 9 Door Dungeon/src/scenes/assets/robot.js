@@ -1,3 +1,6 @@
+import { foe } from "./foe";
+import { HitBox } from "./hitBox";
+
 export class Robot extends Phaser.Physics.Arcade.Sprite
 {
   constructor (scene, x, y, key)
@@ -11,8 +14,9 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     this.isFrenzy = false;
     this.gunCD = 0;
     this.isLocked = false;
-    this.swordBox;
+    this.swordBox = new HitBox(this.scene, this.x, this.y, 100, 100);
     this.dead = false
+    this.win = false
   }
 
   idle() {
@@ -33,25 +37,32 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     this.facing = 'left'
   }
 
-  attack(meleeWeapon) {
-    let { x, y } = this.facing === 'left' ? this.getLeftCenter() : this.getRightCenter()
+  attack() {
+    // let { x, y } = this.facing === 'left' ? this.getLeftCenter() : this.getRightCenter()
+
+    this.on('animationupdate', (anim, frame, sprite, frameKey) => {
+      this.swordBox.animate(frame, this.facing, this.x, this.y)
+    })
 
     if (this.lastAttack === 1) {
       this.anims.play('robAtt2', true).once('animationcomplete', () => {
         this.lastAttack = 2
         this.isLocked = false
         // sword.slash(x - 100, y, this.facing)
+        this.scene.physics.world.disable(this.swordBox)
       })
     } else if (this.lastAttack === 2) {
       this.anims.play('robAtt3', true).once('animationcomplete', () => {
         this.lastAttack = 3
         this.isLocked = false
+        this.scene.physics.world.disable(this.swordBox)
         // sword.slash(x, y, this.facing)
       })
     } else {
       this.anims.play('robAtt1', true).once('animationcomplete', () => {
         this.lastAttack = 1
         this.isLocked = false
+        this.scene.physics.world.disable(this.swordBox)
         // sword.slash(x, y, this.facing)
       })
     }
@@ -100,8 +111,18 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
   die() {
     this.anims.play('robDead', true).once('animationcomplete', () => {
       this.dead = true,
-      this.scene.completeLevel()
+      this.justBeat = {
+        foe: 'robot',
+        weapon: 'cannon'
+      }
+      this.scene.scene.start('LevelComplete')
     })
+  }
+
+  victory() {
+    console.log('ROB WINS')
+    this.win = true
+    this.anims.play('robShutdown', true)
   }
 
   animate(command) {
@@ -151,7 +172,7 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
       this.gunCD -= 1
     }
 
-    if (!this.isLocked && this.hp > 0) {
+    if (!this.isLocked && this.hp > 0 && !this.win) {
       this.chooseCommand(player, sparks, time, meleeWeapon)
       // this.idle()
     }

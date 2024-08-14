@@ -12,31 +12,7 @@ export class SlashSprite extends Phaser.Physics.Arcade.Sprite
     // console.log(this)
 
     this.on('animationupdate', (anim, frame, sprite, frameKey) => {
-      // console.log(frame.index)
-      if (frame.index === 1) {
-        this.scene.physics.world.disable(slashBox)
-        slashBox = facing === 'left' ? x -100: x
-        slashBox = y
-        slashBox.body.allowGravity = false
-      }
-      if (frame.index === 2) {
-        slashBox.colliderActive = true
-        this.scene.physics.world.enable(slashBox)
-        // console.log(this.scene.physics.world)
-        slashBox.x = facing === 'left' ? x -30: x + 50
-        slashBox.y = y + 50
-        slashBox.body.height = 60
-        slashBox.body.width = 60
-      }
-      if (frame.index > 2 && frame.index < 10) {
-        // this.scene.physics.world.enable(slashBox)
-        // console.log(this.scene.physics.world)
-        slashBox.x = facing === 'left' ? x -30: x + 50
-        slashBox.y = y + 50
-        slashBox.body.height = 60
-        slashBox.body.width = 60
-        // console.log(slashBox)
-      }
+      slashBox.animate(frame, facing, x, y)
     })
 
     if (facing === 'left') {

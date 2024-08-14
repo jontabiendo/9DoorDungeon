@@ -1,4 +1,5 @@
 import { SlashSprite } from "./slashSprite";
+import { HitBox } from "./hitBox";
 
 export class MC extends Phaser.Physics.Arcade.Sprite
 {
@@ -24,8 +25,9 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     this.lastAttack = 3;
     this.lastFired = 0;
     this.charging = false
-    this.slashBox = this.scene.add.zone(this.x, this.y, 100, 100)
+    this.slashBox = new HitBox(this.scene, this.x, this.y, 100, 100)
     this.attackLocked = false
+    this.dead = false
   }
   
   savePlayer() {
@@ -47,8 +49,6 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     };
 
     localStorage.setItem('9DDPlayerData', JSON.stringify(config))
-
-    
   }
 
   idle() {
@@ -72,7 +72,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     let slash1 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash1')
     let slash2 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash2')
     // console.log(this.slashBox)
-    this.slashBox.colliderActive = false
+    // this.slashBox.colliderActive = false
 
     if (this.lastAttack === 1) {
       slash2.animate(this.facing, 2, this.x, this.y, this.slashBox)
@@ -136,9 +136,20 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   }
 
   getHit(damage){
-    this.anims.play('hurt')
-    this.hp -= damage * this.dmgMod;
+    console.log(this.hp)
+    if (this.hp > 0){
+      this.anims.play('hurt')
+      this.hp -= damage * this.dmgMod;
+    }
     // console.log('IM HIT', this.hp)
+  }
+
+  die() {
+    this.anims.play('mcDie', true).once('animationcomplete', () => {
+      this.dead = true;
+
+      setTimeout(() => this.scene.scene.start('GameOver'), 3000)
+    })
   }
 
   movement(cursors) {
@@ -157,7 +168,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     }
 
     if (cursors.down.isDown) {
-      this.fastFall();
+      this.body.setVelocityY(500)
     }
   }
 
@@ -181,9 +192,17 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     } else {
       this.setFlipX(false)
     }
-    this.movement(cursors)
-    if (!this.attackLocked) {
+
+    if (this.hp <= 0 && !this.dead) {
+      console.log('MC IS DYING')
+      this.die()
+    }
+
+    if (this.hp > 0) {
+      this.movement(cursors)
+      if (!this.attackLocked) {
       this.animate(cursors, slash, shoot, time, delta, sparks)
+      }
     }
   }
 

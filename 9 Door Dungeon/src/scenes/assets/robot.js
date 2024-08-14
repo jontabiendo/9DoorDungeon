@@ -6,12 +6,14 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     scene.add.existing(this);
     this.facing = 'left';
     this.lastAttack;
-    this.hp = 1000;
+    // this.hp = 50000; // actualy hp
+    this.hp = 10000; // placeholder hp
     this.dmgMod = 1
     this.isFrenzy = false;
     this.gunCD = 0;
     this.isLocked = false;
     this.swordBox;
+    this.dead = false
   }
 
   idle() {
@@ -34,11 +36,6 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
 
   attack(meleeWeapon) {
     let { x, y } = this.facing === 'left' ? this.getLeftCenter() : this.getRightCenter()
-
-    // const sword = meleeWeapon.get()
-    // sword.width = 100
-    // sword.height = 50
-    // console.log(sword)
 
     if (this.lastAttack === 1) {
       this.anims.play('robAtt2', true).once('animationcomplete', () => {
@@ -91,8 +88,21 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
 
   getHit(damage) {
     this.hp -= damage * this.dmgMod;
-    this.anims.play('robHurt', true)
-    console.log('ROB HIT', this.hp)
+    this.anims.play('robHurt', true).once('animationcomplete', () => {
+      // this.update()
+    })
+  }
+
+  takeDamage(damage) {
+    this.hp -= damage * this.dmgMod;
+    console.log(this.hp)
+  }
+
+  die() {
+    this.anims.play('robDead', true).once('animationcomplete', () => {
+      this.dead = true,
+      this.scene.completeLevel()
+    })
   }
 
   animate(command) {
@@ -134,15 +144,19 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     } else {
       this.setFlipX(false)
     }
+    if (this.hp <= 0 && !this.dead) {
+      this.die()
+    }
 
     if (this.gunCD > 0) {
       this.gunCD -= 1
     }
 
-    if (!this.isLocked) {
+    if (!this.isLocked && this.hp > 0) {
       this.chooseCommand(player, sparks, time, meleeWeapon)
       // this.idle()
     }
+
 
   }
 }

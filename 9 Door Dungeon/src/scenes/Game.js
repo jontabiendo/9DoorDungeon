@@ -15,6 +15,8 @@ export class Game extends Scene
         this.shoot
         this.sparks
         this.lastFired = 0;
+        this.complete = false
+        this.roll = null
     }
 
     preload()
@@ -326,10 +328,13 @@ export class Game extends Scene
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.slash = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-        console.log(this.slash)
-        // this.slash.setEmitOnRepeat(false)
+        // console.log(this.slash)
+        this.slash.setEmitOnRepeat(false)
         this.slash.emitOnRepeat = true;
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+
+        
+        this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
         this.sparks = this.physics.add.group({
             classType: Spark,
@@ -378,17 +383,27 @@ export class Game extends Scene
 
             this.particle.emitParticleAt(x, y)
         })
-
-        this.slashes = this.physics.add.group({
-            classType: SlashSprite,
-            maxSize: 10,
-            allowGravity: false,
-            runChildUpdate: true
-        });
-
-        this.physics.add.collider(this.slashes, this.foe, (foe, slash) => {
-            console.log(foe)
+        
+        // console.log(this.player.slashBox)
+        this.physics.add.collider(this.player.slashBox, this.foe, (slashBox, foe) => {
+            // console.log(this.player.slashBox)
+            if (this.player.slashBox.colliderActive) {
+                this.foe.takeDamage(100)
+                slashBox.colliderActive = false
+            }
+            this.physics.world.disable(slashBox)
         })
+
+        // this.slashes = this.physics.add.group({
+        //     classType: SlashSprite,
+        //     maxSize: 10,
+        //     allowGravity: false,
+        //     runChildUpdate: true
+        // });
+
+        // this.physics.add.collider(this.slashes, this.foe, (foe, slash) => {
+        //     console.log(foe)
+        // })
 
         this.anims.create({
             key: 'run',
@@ -530,8 +545,7 @@ export class Game extends Scene
             key: 'robDead',
             frames: this.anims.generateFrameNumbers('robDead', { start: 0, end: 3}),
             framRate: 10,
-            repeat: -1,
-            duration: 600
+            duration: 1000
         })
         this.anims.create({
             key: 'robEnabling',
@@ -543,7 +557,7 @@ export class Game extends Scene
             key: 'robHurt',
             frames: this.anims.generateFrameNumbers('robHurt', { start: 0, end: 2}),
             framRate: 10,
-            repeat: -1
+            duration: 100
         })
         this.anims.create({
             key: 'robIdle',
@@ -568,8 +582,33 @@ export class Game extends Scene
 
     update(time, delta)
     {
-        this.player.update(this.cursors, this.slash, this.shoot, time, delta, this.sparks, this.meleeWeapons)
+        if (!this.complete) {
+            this.player.update(this.cursors, this.slash, this.shoot, time, delta, this.sparks, this.meleeWeapons)
 
-        this.foe.update(this.player, this.sparks, time, this.meleeWeapons)
+            this.foe.update(this.player, this.sparks, time, this.meleeWeapons)
+        } else {
+            if (this.spacebar.isDown && this.roll === null) {
+                this.showRoll()
+            }
+        }
+    }
+
+    completeLevel() {
+        // console.log('you win')
+        const text = this.add.text(150, 300, 'YOU BEAT THE ROBOT', { fontSize: '48px', fill: 'white'})
+        text.setOrigin(0,0)
+
+        this.tempText = this.add.text(100, 400, 'PRESS SPACE TO ROLL YOUR REWARD', { fontSize: '36px', fill: 'white'})
+        this.complete = true
+
+        // console.log(this.spacebar)
+    }
+
+    showRoll() {
+        this.roll = Math.ceil(Math.random() * 9)
+        console.log(this.tempText)
+        this.tempText.setVisible(false)
+
+        this.add.text(100, 400, `YOU ROLLED A ${this.roll} LASER`)
     }
 }

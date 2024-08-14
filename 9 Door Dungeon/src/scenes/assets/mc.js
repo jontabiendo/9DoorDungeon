@@ -11,7 +11,9 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     this.lastFired = 0;
     this.hp = 1000;
     this.dmgMod = 1
+    this.cannon = 0
     this.charging = false
+    this.slashBox = this.scene.add.zone(this.x, this.y, 100, 100)
   }
 
   idle() {
@@ -37,23 +39,25 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   attack() {
     let slash1 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash1')
     let slash2 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash2')
+    // console.log(this.slashBox)
+    this.slashBox.colliderActive = false
 
     if (this.lastAttack === 1) {
-      slash2.animate(this.facing, 2)
+      slash2.animate(this.facing, 2, this.x, this.y, this.slashBox)
       this.anims.play('attack2', true).once('animationcomplete', () => {
         this.lastAttack = 2
         // slash.disableBody(true, true)
 
       })
     } else if (this.lastAttack === 2) {
-      slash2.animate(this.facing, 3)
+      slash2.animate(this.facing, 3, this.x, this.y, this.slashBox)
       this.anims.play('attack3', true).once('animationcomplete', () => {
         this.lastAttack = 3
         // slash.disableBody(true, true)
 
       })
     } else {
-      slash1.animate(this.facing, 1)
+      slash1.animate(this.facing, 1, this.x, this.y, this.slashBox)
       this.anims.play('attack1', true).once('animationcomplete', () => {
         this.lastAttack = 1
         // slash.disableBody(true, true)
@@ -68,7 +72,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   }
 
   shoot(sparks, time) {
-    let start = Date.now()
+    // let start = Date.now()
 
       this.anims.play('shoot', true).once('animationcomplete', () => {
         this.lastAttack = 4;
@@ -83,7 +87,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
         };
         
         const spark = sparks.get();
-        console.log(spark)
+        // console.log(spark)
         
         if (spark)
           {
@@ -92,13 +96,13 @@ export class MC extends Phaser.Physics.Arcade.Sprite
             this.lastFired = time + 150;
           }
         })
-      console.log("time:", Date.now() - start)
+      // console.log("time:", Date.now() - start)
   }
 
   getHit(damage){
     this.anims.play('hurt')
     this.hp -= damage * this.dmgMod;
-    console.log('IM HIT', this.hp)
+    // console.log('IM HIT', this.hp)
   }
 
   movement(cursors) {

@@ -2,19 +2,53 @@ import { SlashSprite } from "./slashSprite";
 
 export class MC extends Phaser.Physics.Arcade.Sprite
 {
-  constructor (scene, x, y, key)
+  constructor (scene, x, y, key, config)
   {
     super(scene, x, y, key)
     scene.add.existing(this);
+    this.hp = 1000;
+    this.maxHP = 1000
+    this.dmgMod = 1
+    this.attackMod = 1
+    this.cannon = config.cannon
+    this.claws = config.claws
+    this.armor = config.armor
+    this.freeze = config. freeze
+    this.hammer = config.hammer
+    this.sword = config.sword
+    this.boots = config.boots 
+    this.crit = config.crit
+    this.wings = config. wings
+
     this.facing = 'right';
     this.lastAttack = 3;
     this.lastFired = 0;
-    this.hp = 1000;
-    this.dmgMod = 1
-    this.cannon = 0
     this.charging = false
     this.slashBox = this.scene.add.zone(this.x, this.y, 100, 100)
     this.attackLocked = false
+  }
+  
+  savePlayer() {
+    let config = {
+      maxHP: this.maxHP,
+      dmgMod: this.dmgMod,
+      cannon: this.cannon,
+      attackSpeedMod: this.attackSpeedMod,
+      dmgOutputMod: this.dmgOutputMod,
+      claws: this.claws,
+      cannon: this.cannon,
+      armor: this.armor,
+      freeze: this.freeze,
+      hammer: this.hammer,
+      sword: this.sword,
+      boots: this.boots,
+      wings: this.wings,
+      crit: this.crit
+    };
+
+    localStorage.setItem('9DDPlayerData', JSON.stringify(config))
+
+    
   }
 
   idle() {
@@ -152,4 +186,23 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       this.animate(cursors, slash, shoot, time, delta, sparks)
     }
   }
+
+}
+
+export function createMC(scene, x, y, key, config)
+{
+  let playerConfig = {
+    cannon : config.cannon || null,
+    claws : config.claws || null,
+    armor : config.armor || null,
+    freeze : config. freeze || null,
+    hammer : config.hammer || null,
+    sword : config.sword || null,
+    boots : config.boots || null,
+    crit : config.crit || null,
+    wings : config. wings || null
+  }
+  let player = new MC(scene, x, y, key, playerConfig);
+
+  return player
 }

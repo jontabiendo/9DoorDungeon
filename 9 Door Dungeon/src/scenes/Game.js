@@ -1,6 +1,6 @@
 import { FX, Scene } from 'phaser';
 import { Spark } from './assets/spark';
-import { MC } from './assets/mc';
+import { MC, createMC } from './assets/mc';
 import { Robot } from './assets/robot'
 import { SlashSprite } from './assets/slashSprite';
 
@@ -313,7 +313,9 @@ export class Game extends Scene
         platforms.create(50, 250, 'castleGround');
         platforms.create(750, 220, 'castleGround');
         
-        this.player = new MC(this, 100, 100, 'MC');
+        let playerConfig = localStorage.getItem('MCPlayerData') || {}
+        console.log(playerConfig)
+        this.player = createMC(this, 100, 100, 'MC', playerConfig);
         
         this.physics.add.existing(this.player)
         this.player.setSize(30, 55)
@@ -589,6 +591,7 @@ export class Game extends Scene
         } else {
             if (this.spacebar.isDown && this.roll === null) {
                 this.showRoll()
+                this.player.savePlayer()
             }
         }
     }
@@ -605,10 +608,9 @@ export class Game extends Scene
     }
 
     showRoll() {
-        this.roll = Math.ceil(Math.random() * 9)
-        console.log(this.tempText)
-        this.tempText.setVisible(false)
-
-        this.add.text(100, 400, `YOU ROLLED A ${this.roll} LASER`)
+        let roll = Math.ceil(Math.random() * 9)
+        // console.log(this.tempText)
+        this.tempText = this.add.text(100, 400, `YOU ROLLED A ${this.roll} LASER`)
+        this.player.cannon = roll
     }
 }

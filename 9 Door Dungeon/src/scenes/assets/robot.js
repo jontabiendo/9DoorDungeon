@@ -6,8 +6,7 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     scene.add.existing(this);
     this.facing = 'left';
     this.lastAttack;
-    // this.hp = 50000; // actualy hp
-    this.hp = 10000; // placeholder hp
+    this.hp = 1000; 
     this.dmgMod = 1
     this.isFrenzy = false;
     this.gunCD = 0;

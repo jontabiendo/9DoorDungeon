@@ -14,6 +14,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     this.cannon = 0
     this.charging = false
     this.slashBox = this.scene.add.zone(this.x, this.y, 100, 100)
+    this.attackLocked = false
   }
 
   idle() {
@@ -32,11 +33,8 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     this.facing = 'left'
   }
 
-  jump() {
-    this.body.setVelocityY(-330);
-  }
-
   attack() {
+    this.attackLocked = true
     let slash1 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash1')
     let slash2 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash2')
     // console.log(this.slashBox)
@@ -46,6 +44,8 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       slash2.animate(this.facing, 2, this.x, this.y, this.slashBox)
       this.anims.play('attack2', true).once('animationcomplete', () => {
         this.lastAttack = 2
+        this.attackLocked = false
+
         // slash.disableBody(true, true)
 
       })
@@ -53,6 +53,8 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       slash2.animate(this.facing, 3, this.x, this.y, this.slashBox)
       this.anims.play('attack3', true).once('animationcomplete', () => {
         this.lastAttack = 3
+        this.attackLocked = false
+
         // slash.disableBody(true, true)
 
       })
@@ -60,6 +62,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       slash1.animate(this.facing, 1, this.x, this.y, this.slashBox)
       this.anims.play('attack1', true).once('animationcomplete', () => {
         this.lastAttack = 1
+        this.attackLocked = false
         // slash.disableBody(true, true)
 
       })
@@ -67,12 +70,9 @@ export class MC extends Phaser.Physics.Arcade.Sprite
 
   }
 
-  fastFall() {
-    this.body.setVelocityY(500)
-  }
-
   shoot(sparks, time) {
     // let start = Date.now()
+    this.attackLocked = true
 
       this.anims.play('shoot', true).once('animationcomplete', () => {
         this.lastAttack = 4;
@@ -96,6 +96,8 @@ export class MC extends Phaser.Physics.Arcade.Sprite
             this.lastFired = time + 150;
           }
         })
+        this.attackLocked = false
+
       // console.log("time:", Date.now() - start)
   }
 
@@ -117,7 +119,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     }
 
     if (cursors.up.isDown && this.body.touching.down){
-        this.jump();
+      this.body.setVelocityY(-330);
     }
 
     if (cursors.down.isDown) {
@@ -146,6 +148,8 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       this.setFlipX(false)
     }
     this.movement(cursors)
-    this.animate(cursors, slash, shoot, time, delta, sparks)
+    if (!this.attackLocked) {
+      this.animate(cursors, slash, shoot, time, delta, sparks)
+    }
   }
 }

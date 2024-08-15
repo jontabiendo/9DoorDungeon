@@ -1,10 +1,11 @@
 import { Boot } from './scenes/Boot';
-import { Game } from './scenes/Game';
+import { RobotFight } from './scenes/RobotFight';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 import { Credits } from './scenes/Credits';
 import { LevelComplete } from './scenes/levelCompleteScreen';
+import { SamuraiFight } from './scenes/SamuraiFight';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -29,7 +30,8 @@ const config = {
         Boot,
         Preloader,
         MainMenu,
-        Game,
+        RobotFight,
+        SamuraiFight,
         LevelComplete,
         GameOver,
         Credits

@@ -43,7 +43,7 @@ export class LevelComplete extends Scene
     this.savePlayer()
   }
 
-  savePlayer() {
+  async savePlayer() {
     let config;
     let prevData = JSON.parse(localStorage.getItem('9DDPlayerData'))
     if (prevData) {
@@ -71,6 +71,13 @@ export class LevelComplete extends Scene
     config[foe.getFoe().weapon] = this.roll
 
 
-    localStorage.setItem('9DDPlayerData', JSON.stringify(config))    
+    localStorage.setItem('9DDPlayerData', JSON.stringify(config))
+
+    this.nextScene()
+  }
+
+  nextScene()
+  {
+    this.scene.start('SamuraiFight')
   }
 }

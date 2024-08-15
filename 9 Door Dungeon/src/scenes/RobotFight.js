@@ -5,11 +5,11 @@ import { Robot } from './assets/robot'
 import { SlashSprite } from './assets/slashSprite';
 import { foe } from './assets/foe';
 
-export class Game extends Scene
+export class RobotFight extends Scene
 {
     constructor ()
     {
-        super('Game');
+        super('RobotFight');
         this.player;
         this.cursors;
         this.slash;
@@ -24,7 +24,7 @@ export class Game extends Scene
     {
         // assets
         this.load.image('ship', 'assets/stages/spaceship.jpg');
-        this.load.image('castleGround', 'assets/platforms/wall_3.png');
+        // this.load.image('castleGround', 'assets/platforms/wall_3.png');
         this.load.image('metal_center', 'assets/platforms/metal_center.png'
         )
         this.load.image('metal_left', 'assets/platforms/metal_left.png'
@@ -318,11 +318,11 @@ export class Game extends Scene
         // platforms
         let platforms = this.physics.add.staticGroup();
         
-        platforms.create(0, 600, 'metal_left');
-        let centerPlatform = platforms.create(700, 600, 'metal_center')
-        centerPlatform.setScale(10, 0);
-        console.log(centerPlatform)
-        platforms.create(800, 600, 'metal_right');
+        // platforms.create(0, 600, 'metal_left');
+        // let centerPlatform = platforms.create(700, 600, 'metal_center')
+        // centerPlatform.setScale(10, 0);
+        // console.log(centerPlatform)
+        // platforms.create(800, 600, 'metal_right');
 
         for (let i = 0; i < 800; i += 16) {
             platforms.create(i, 600, 'metal_center')
@@ -350,7 +350,6 @@ export class Game extends Scene
         this.slash.emitOnRepeat = true;
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
 
-        
         this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
         this.sparks = this.physics.add.group({

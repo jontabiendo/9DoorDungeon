@@ -611,6 +611,7 @@ export class RobotFight extends Scene
         })
 
         this.events.emit('fightStart', 'EDA')
+        // console.log(this.player.slashSound1)
     }
 
     update(time, delta)

@@ -5,11 +5,11 @@ export class SlashSprite extends Phaser.Physics.Arcade.Sprite
     this.setScale(0.2)
   }
 
-  animate(facing, slash, x, y, slashBox) {
+  animate(facing, slash, x, y, slashBox, sound) {
     this.scene.add.existing(this);
 
     // this.setSize(50, 50)
-    // console.log(this)
+    console.log(sound)
 
     this.on('animationupdate', (anim, frame, sprite, frameKey) => {
       slashBox.animate(frame, facing, x, y)
@@ -27,6 +27,7 @@ export class SlashSprite extends Phaser.Physics.Arcade.Sprite
       this.setFlipY(true)
       this.setScale(0.15)
       this.y += 20
+      // sound.play()
       this.anims.playAfterDelay('mcSlash2', 250).once('animationcomplete', () => {
         this.setActive(false);
         this.setVisible(false);

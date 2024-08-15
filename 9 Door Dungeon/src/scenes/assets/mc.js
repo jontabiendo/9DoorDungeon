@@ -28,6 +28,8 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     this.slashBox = new HitBox(this.scene, this.x, this.y, 100, 100)
     this.attackLocked = false
     this.dead = false
+
+    this.slashSound1 = this.scene.sound.add('slash1')
   }
   
   savePlayer() {
@@ -73,9 +75,11 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     let slash2 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash2')
     // console.log(this.slashBox)
     // this.slashBox.colliderActive = false
+    console.log(this.slashSound1)
 
     if (this.lastAttack === 1) {
-      slash2.animate(this.facing, 2, this.x, this.y, this.slashBox)
+      slash2.animate(this.facing, 2, this.x, this.y, this.slashBox, this.slashSound1)
+      this.slashSound1.play()
       this.anims.play('attack2', true).once('animationcomplete', () => {
         this.lastAttack = 2
         this.attackLocked = false
@@ -85,6 +89,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       })
     } else if (this.lastAttack === 2) {
       slash2.animate(this.facing, 3, this.x, this.y, this.slashBox)
+      this.slashSound1.play()
       this.anims.play('attack3', true).once('animationcomplete', () => {
         this.lastAttack = 3
         this.attackLocked = false
@@ -94,6 +99,7 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       })
     } else {
       slash1.animate(this.facing, 1, this.x, this.y, this.slashBox)
+      this.slashSound1.play()
       this.anims.play('attack1', true).once('animationcomplete', () => {
         this.lastAttack = 1
         this.attackLocked = false

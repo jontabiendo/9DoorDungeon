@@ -13,6 +13,8 @@ export class Preloader extends Scene
         let bg = this.add.image(512, 384, 'coverScreen');
         bg.setScale(0.5)
 
+
+
         //  A simple progress bar. This is the outline of the bar.
         this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
 

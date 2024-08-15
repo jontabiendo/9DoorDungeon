@@ -10,6 +10,7 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
     this.facing = 'left';
     this.lastAttack;
     this.hp = 1000; 
+    this.maxHP = 1000
     this.dmgMod = 1
     this.isFrenzy = false;
     this.gunCD = 0;
@@ -106,6 +107,7 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
   takeDamage(damage) {
     this.hp -= damage * this.dmgMod;
     console.log(this.hp)
+    this.scene.events.emit('foeHit', this.hp / this.maxHP)
   }
 
   die() {
@@ -116,6 +118,7 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
         weapon: 'cannon'
       }
       this.scene.scene.start('LevelComplete')
+      this.scene.events.emit('fightEnd')
     })
   }
 

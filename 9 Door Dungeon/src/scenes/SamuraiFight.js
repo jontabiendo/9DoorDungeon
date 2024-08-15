@@ -99,7 +99,7 @@ export class SamuraiFight extends Scene
     
     this.player.setCollideWorldBounds(true);
     this.player.body.setGravity(0, 300)
-    console.log(this.player)
+    // console.log(this.player)
 
     this.physics.add.collider(this.player, platforms);
 
@@ -298,6 +298,8 @@ export class SamuraiFight extends Scene
       frames: this.anims.generateFrameNumbers('samWalk', { start: 0, end: 7 }),
       frameRate: 10
     })
+
+    this.events.emit('fightStart', 'Tsuki')
   }
 
   update(time, delta)

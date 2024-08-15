@@ -6,6 +6,7 @@ import { Preloader } from './scenes/Preloader';
 import { Credits } from './scenes/Credits';
 import { LevelComplete } from './scenes/levelCompleteScreen';
 import { SamuraiFight } from './scenes/SamuraiFight';
+import { UI } from './scenes/UI';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -34,7 +35,8 @@ const config = {
         SamuraiFight,
         LevelComplete,
         GameOver,
-        Credits
+        Credits,
+        UI
     ]
 };
 

@@ -325,7 +325,7 @@ export class RobotFight extends Scene
         // platforms.create(800, 600, 'metal_right');
 
         for (let i = 0; i < 800; i += 16) {
-            platforms.create(i, 600, 'metal_center')
+            platforms.create(i, 500, 'metal_center')
         }
         
         let playerConfig = localStorage.getItem('MCPlayerData') || {}
@@ -384,7 +384,7 @@ export class RobotFight extends Scene
 
         this.foe = new Robot(this, 500, 400, 'robot');
         this.foe.setScale(1.5)
-        foe.foe = 'robot'
+        foe.foe = 'EDA'
         foe.weapon = 'cannon'
 
         this.physics.add.existing(this.foe)
@@ -609,6 +609,8 @@ export class RobotFight extends Scene
             frames: this.anims.generateFrameNumbers('robShutdown', { start: 0, end: 4}),
             framRate: 10,
         })
+
+        this.events.emit('fightStart', 'EDA')
     }
 
     update(time, delta)
@@ -619,11 +621,14 @@ export class RobotFight extends Scene
             this.foe.update(this.player, this.sparks, time, this.meleeWeapons)
         } else if (this.player.dead && !this.foe.win) {
             this.foe.victory()
+            // this.events.emit('fightEnd')
         } else {
             if (this.spacebar.isDown && this.roll === null) {
                 this.showRoll()
                 this.player.savePlayer()
             }
+            // this.events.emit('fightEnd')
+
         }
     }
 

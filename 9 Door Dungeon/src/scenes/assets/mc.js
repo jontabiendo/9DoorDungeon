@@ -141,12 +141,15 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       this.anims.play('hurt')
       this.hp -= damage * this.dmgMod;
     }
+
+    this.scene.events.emit('playerHit', this.hp / this.maxHP)
     // console.log('IM HIT', this.hp)
   }
 
   die() {
     this.anims.play('mcDie', true).once('animationcomplete', () => {
       this.dead = true;
+      this.scene.events.emit('fightEnd')
 
       setTimeout(() => this.scene.scene.start('GameOver'), 3000)
     })

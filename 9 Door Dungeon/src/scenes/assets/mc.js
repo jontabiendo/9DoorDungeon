@@ -153,8 +153,8 @@ export class MC extends Phaser.Physics.Arcade.Sprite
   }
 
   die() {
+    this.dead = true;
     this.anims.play('mcDie', true).once('animationcomplete', () => {
-      this.dead = true;
       this.scene.events.emit('fightEnd')
 
       setTimeout(() => this.scene.scene.start('GameOver'), 3000)

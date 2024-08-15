@@ -8,6 +8,7 @@ export class LevelComplete extends Scene
     this.foe = foe.getFoe().foe;
     this.weapon = foe.getFoe().weapon;
     this.roll = null
+    this.locked = false
   }
 
   preload()
@@ -30,12 +31,17 @@ export class LevelComplete extends Scene
 
   update()
   {
+    console.log('SCENE LOCKED: ', this.locked)
     if (this.spacebar.isDown && !this.roll) {
       this.rollReward()
+    }
+    if (this.spacebar.isDown && !this.locked) {
+      this.nextScene()
     }
   }
 
   rollReward() {
+    this.locked = true
     this.tempText.destroy()
     this.roll = Math.ceil(Math.random() * 9)
     // console.log(this.tempText)
@@ -44,7 +50,7 @@ export class LevelComplete extends Scene
     this.savePlayer()
   }
 
-  async savePlayer() {
+  savePlayer() {
     let config;
     let prevData = JSON.parse(localStorage.getItem('9DDPlayerData'))
     if (prevData) {
@@ -74,7 +80,7 @@ export class LevelComplete extends Scene
 
     localStorage.setItem('9DDPlayerData', JSON.stringify(config))
 
-    this.nextScene()
+    setTimeout(() => this.locked = false, 2000)
   }
 
   nextScene()

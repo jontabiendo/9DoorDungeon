@@ -10,7 +10,7 @@ export class MainMenu extends Scene
     preload()
     {
         this.load.audio('music', 'assets/audio/music/ES_Fight Club - Cushy.mp3')
-        this.load.audio('slash1', '/assets/audio/effects/slash1.mp3')
+        this.load.audio('slash1', 'assets/audio/effects/slash1.mp3')
 
         this.load.spritesheet('run',
             'assets/characterAssets/main/Run.png',
@@ -218,16 +218,17 @@ export class MainMenu extends Scene
         )
 
     }
-
+    
     create ()
     {
         this.add.image(400, 300, 'coverScreen');
-
-        const music = this.sound.add('music')
-        // music.audio.
-        music.play({
-            volume: 0.4
-        })
+        
+        // this.music = this.sound.add('music')
+        // if (!this.music.isPlaying) {
+        //     this.music.play({
+        //     volume: 0.4
+        //     })
+        // }
 
         // this.add.image(400, 300, 'logo');
 

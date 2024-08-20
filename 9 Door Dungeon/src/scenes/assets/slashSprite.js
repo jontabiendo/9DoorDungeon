@@ -8,9 +8,6 @@ export class SlashSprite extends Phaser.Physics.Arcade.Sprite
   animate(facing, slash, x, y, slashBox, sound) {
     this.scene.add.existing(this);
 
-    // this.setSize(50, 50)
-    console.log(sound)
-
     this.on('animationupdate', (anim, frame, sprite, frameKey) => {
       slashBox.animate(frame, facing, x, y)
     })

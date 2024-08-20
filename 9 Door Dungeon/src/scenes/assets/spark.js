@@ -23,7 +23,6 @@ export class Spark extends Phaser.Physics.Arcade.Sprite {
     this.body.velocity.x = facing === 'left'? -1000: 1000;
     this.body.velocity.y = 0;
 
-    // console.log(this)
   }
 
   update (delta)
@@ -33,10 +32,8 @@ export class Spark extends Phaser.Physics.Arcade.Sprite {
 
     if (this.lifespan <= 0)
     {
-      // this.destroy()
       this.setActive(false);
       this.setVisible(false);
-      // this.body.stop();
     }
   }
 

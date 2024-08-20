@@ -58,7 +58,6 @@ export class UI extends Scene{
     })
 
     currentScene.events.on('fightEnd', () => {
-      console.log('fight over')
       this.enemyBar.destroy(true)
       this.playerBar.destroy(true)
       this.foeHeader.destroy(true)

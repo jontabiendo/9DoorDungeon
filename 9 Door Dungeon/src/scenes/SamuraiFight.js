@@ -89,7 +89,6 @@ export class SamuraiFight extends Scene
     }
 
     let playerConfig = localStorage.getItem('MCPlayerData') || {}
-    // console.log(playerConfig)
     this.player = createMC(this, 100, 100, 'MC', playerConfig);
 
     this.physics.add.existing(this.player)
@@ -99,7 +98,6 @@ export class SamuraiFight extends Scene
     
     this.player.setCollideWorldBounds(true);
     this.player.body.setGravity(0, 300)
-    // console.log(this.player)
 
     this.physics.add.collider(this.player, platforms);
 

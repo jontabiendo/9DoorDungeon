@@ -317,19 +317,12 @@ export class RobotFight extends Scene
         
         // platforms
         let platforms = this.physics.add.staticGroup();
-        
-        // platforms.create(0, 600, 'metal_left');
-        // let centerPlatform = platforms.create(700, 600, 'metal_center')
-        // centerPlatform.setScale(10, 0);
-        // console.log(centerPlatform)
-        // platforms.create(800, 600, 'metal_right');
 
         for (let i = 0; i < 800; i += 16) {
             platforms.create(i, 500, 'metal_center')
         }
         
         let playerConfig = localStorage.getItem('MCPlayerData') || {}
-        console.log(playerConfig)
         this.player = createMC(this, 100, 100, 'MC', playerConfig);
         
         this.physics.add.existing(this.player)
@@ -345,7 +338,6 @@ export class RobotFight extends Scene
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.slash = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-        // console.log(this.slash)
         this.slash.setEmitOnRepeat(false)
         this.slash.emitOnRepeat = true;
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -402,9 +394,7 @@ export class RobotFight extends Scene
             this.particle.emitParticleAt(x, y)
         })
         
-        // console.log(this.player.slashBox)
         this.physics.add.collider(this.player.slashBox, this.foe, (slashBox, foe) => {
-            // console.log(this.player.slashBox)
             if (this.player.slashBox.colliderActive) {
                 this.foe.takeDamage(100)
                 slashBox.colliderActive = false
@@ -419,17 +409,6 @@ export class RobotFight extends Scene
             }
             this.physics.world.disable(swordBox)
         })
-
-        // this.slashes = this.physics.add.group({
-        //     classType: SlashSprite,
-        //     maxSize: 10,
-        //     allowGravity: false,
-        //     runChildUpdate: true
-        // });
-
-        // this.physics.add.collider(this.slashes, this.foe, (foe, slash) => {
-        //     console.log(foe)
-        // })
 
         this.anims.create({
             key: 'run',
@@ -611,7 +590,9 @@ export class RobotFight extends Scene
         })
 
         this.events.emit('fightStart', 'EDA')
-        // console.log(this.player.slashSound1)
+
+        console.log(this.player)
+
     }
 
     update(time, delta)
@@ -634,19 +615,16 @@ export class RobotFight extends Scene
     }
 
     completeLevel() {
-        // console.log('you win')
         const text = this.add.text(150, 300, 'YOU BEAT THE ROBOT', { fontSize: '48px', fill: 'white'})
         text.setOrigin(0,0)
 
         this.tempText = this.add.text(100, 400, 'PRESS SPACE TO ROLL YOUR REWARD', { fontSize: '36px', fill: 'white'})
         this.complete = true
-
-        // console.log(this.spacebar)
     }
+
 
     showRoll() {
         let roll = Math.ceil(Math.random() * 9)
-        // console.log(this.tempText)
         this.tempText = this.add.text(100, 400, `YOU ROLLED A ${this.roll} LASER`)
         this.player.cannon = roll
     }

@@ -31,7 +31,6 @@ export class LevelComplete extends Scene
 
   update()
   {
-    console.log('SCENE LOCKED: ', this.locked)
     if (this.spacebar.isDown && !this.roll) {
       this.rollReward()
     }
@@ -44,7 +43,6 @@ export class LevelComplete extends Scene
     this.locked = true
     this.tempText.destroy()
     this.roll = Math.ceil(Math.random() * 9)
-    // console.log(this.tempText)
     this.tempText = this.add.text(180, 400, `YOU ROLLED A ${this.roll} ${(foe.getFoe().weapon).toUpperCase()}`, { fontSize: '36px', fill: 'white' })
     // this.player.cannon = roll
     this.savePlayer()

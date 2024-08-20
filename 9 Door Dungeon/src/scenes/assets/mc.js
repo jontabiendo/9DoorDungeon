@@ -31,6 +31,10 @@ export class MC extends Phaser.Physics.Arcade.Sprite
 
     this.slashSound1 = this.scene.sound.add('slash1')
   }
+
+  preUpdate(time, delta) {
+    super.preUpdate(time, delta)
+  }
   
   savePlayer() {
     let config = {
@@ -73,9 +77,6 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     this.attackLocked = true
     let slash1 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash1')
     let slash2 = new SlashSprite(this.scene, this.x, this.y, 'mcSlash2')
-    // console.log(this.slashBox)
-    // this.slashBox.colliderActive = false
-    console.log(this.slashSound1)
 
     if (this.lastAttack === 1) {
       slash2.animate(this.facing, 2, this.x, this.y, this.slashBox, this.slashSound1)
@@ -83,8 +84,6 @@ export class MC extends Phaser.Physics.Arcade.Sprite
       this.anims.play('attack2', true).once('animationcomplete', () => {
         this.lastAttack = 2
         this.attackLocked = false
-
-        // slash.disableBody(true, true)
 
       })
     } else if (this.lastAttack === 2) {
@@ -127,7 +126,6 @@ export class MC extends Phaser.Physics.Arcade.Sprite
         };
         
         const spark = sparks.get();
-        // console.log(spark)
         
         if (spark)
           {
@@ -137,19 +135,15 @@ export class MC extends Phaser.Physics.Arcade.Sprite
           }
         })
         this.attackLocked = false
-
-      // console.log("time:", Date.now() - start)
   }
 
   getHit(damage){
-    console.log(this.hp)
     if (this.hp > 0){
       this.anims.play('hurt')
       this.hp -= damage * this.dmgMod;
     }
 
     this.scene.events.emit('playerHit', this.hp / this.maxHP)
-    // console.log('IM HIT', this.hp)
   }
 
   die() {
@@ -203,7 +197,6 @@ export class MC extends Phaser.Physics.Arcade.Sprite
     }
 
     if (this.hp <= 0 && !this.dead) {
-      console.log('MC IS DYING')
       this.die()
     }
 

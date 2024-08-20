@@ -57,17 +57,14 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
         this.lastAttack = 3
         this.isLocked = false
         this.scene.physics.world.disable(this.swordBox)
-        // sword.slash(x, y, this.facing)
       })
     } else {
       this.anims.play('robAtt1', true).once('animationcomplete', () => {
         this.lastAttack = 1
         this.isLocked = false
         this.scene.physics.world.disable(this.swordBox)
-        // sword.slash(x, y, this.facing)
       })
     }
-    // console.log(sword)
   }
 
   shoot(sparks, time) {
@@ -106,7 +103,6 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
 
   takeDamage(damage) {
     this.hp -= damage * this.dmgMod;
-    console.log(this.hp)
     this.scene.events.emit('foeHit', this.hp / this.maxHP)
   }
 
@@ -123,7 +119,6 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
   }
 
   victory() {
-    console.log('ROB WINS')
     this.win = true
     this.anims.play('robShutdown', true)
   }

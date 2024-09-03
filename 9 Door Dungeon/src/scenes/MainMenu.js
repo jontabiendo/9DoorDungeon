@@ -223,11 +223,11 @@ export class MainMenu extends Scene
     {
         this.add.image(400, 300, 'coverScreen');
         
-        // this.music = this.sound.add('music')
+        const music = this.sound.add('music')
         // if (!this.music.isPlaying) {
-        //     this.music.play({
-        //     volume: 0.4
-        //     })
+            music.play({
+            volume: 0.4
+            })
         // }
 
         // this.add.image(400, 300, 'logo');

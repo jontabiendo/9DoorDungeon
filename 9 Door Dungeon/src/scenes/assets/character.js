@@ -1,3 +1,5 @@
+import { HitBox } from "./hitBox";
+
 export class Character extends Phaser.Physics.Arcade.Sprite
 {
   constructor(scene, x, y, key)
@@ -5,12 +7,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     super(scene, x, y, key);
     this.hp = 1000;
     this.maxHP = 1000;
-    this.armor = 1;
+    this.dmgRed = 1;
     this.dmgAmp = 1;
     this.moveSpeed;
     this.facing = 'right';
     this.dead = false;
     this.projectile;
+    this.meleeAtt
     this.lastAttack;
     this.lastFired;
     this.attackSound;

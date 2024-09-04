@@ -114,7 +114,7 @@ export class Robot extends Phaser.Physics.Arcade.Sprite
         weapon: 'cannon'
       }
       this.scene.scene.start('LevelComplete')
-      this.scene.events.emit('fightEnd')
+      this.scene.events.emit('removeUI')
     })
   }
 

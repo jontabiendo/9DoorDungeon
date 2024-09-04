@@ -603,13 +603,13 @@ export class RobotFight extends Scene
             this.foe.update(this.player, this.sparks, time, this.meleeWeapons)
         } else if (this.player.dead && !this.foe.win) {
             this.foe.victory()
-            // this.events.emit('fightEnd')
+            // this.events.emit('removeUI')
         } else {
             if (this.spacebar.isDown && this.roll === null) {
                 this.showRoll()
                 this.player.savePlayer()
             }
-            // this.events.emit('fightEnd')
+            // this.events.emit('removeUI')
 
         }
     }

@@ -18,7 +18,7 @@ export class LevelComplete extends Scene
 
   create() 
   {
-    this.events.emit('fightEnd')
+    this.events.emit('removeUI')
     this.cameras.main.setBackgroundColor(0x000000);
     const text = this.add.text(150, 300, `YOU BEAT THE ${(foe.getFoe().foe).toUpperCase()}`, { fontSize: '48px', fill: 'white'})
     text.setOrigin(0,0)

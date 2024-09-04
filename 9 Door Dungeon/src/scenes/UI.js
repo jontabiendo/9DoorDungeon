@@ -57,7 +57,7 @@ export class UI extends Scene{
       this.playerBar.setSize(600 * hpPercent, 28);   
     })
 
-    currentScene.events.on('fightEnd', () => {
+    currentScene.events.on('removeUI', () => {
       this.enemyBar.destroy(true)
       this.playerBar.destroy(true)
       this.foeHeader.destroy(true)

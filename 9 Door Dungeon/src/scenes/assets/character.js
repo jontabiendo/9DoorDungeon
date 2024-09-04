@@ -28,6 +28,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     this.shootAnim;
     this.getHitAnim;
     this.dieAnim;
+
+    //eventKeys
+    this.charHit;
+    // this.charDie;
   };
 
   idle() 
@@ -63,8 +67,36 @@ export class Character extends Phaser.Physics.Arcade.Sprite
 
   //action methods
 
-  attack()
+  // attack()
+  // {
+  //   this.attackLocked = true
+  // }
+
+  // shoot()
+  // {
+
+  // }
+
+  getHit(damage)
   {
-    this.attackLocked = true
+    this.hp -= damage * this.armor;
+    this.anims.play(this.getHitAnim, true);
+
+    // event updates UI health bar
+    this.scene.events.emit(this.charHit, this.hp / this.maxHP);
+  }
+
+  die()
+  {
+    this.anims.play(this.dieAnim, true).once('animationcomplete', () => {
+      this.dead = true;
+      this.scene.events.emit('removeUI')
+      
+      if (this.key === 'player') {
+        setTimeout(() => this.scene.scene.start('GameOver'), 3000);
+      } else {
+        this.scene.scene.start('LevelComplete');
+      }
+    })
   }
 }

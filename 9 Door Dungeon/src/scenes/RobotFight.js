@@ -1,6 +1,7 @@
 import { FX, Scene } from 'phaser';
 import { Spark } from './assets/spark';
 import { MC, createMC } from './assets/mc';
+import { Player, createPlayer } from './assets/player';
 import { Robot } from './assets/robot'
 import { SlashSprite } from './assets/slashSprite';
 import { foe } from './assets/foe';
@@ -316,24 +317,25 @@ export class RobotFight extends Scene
         this.add.image(400, 300, 'ship').setScale(0.75);
         
         // platforms
-        let platforms = this.physics.add.staticGroup();
+        this.platforms = this.physics.add.staticGroup();
 
         for (let i = 0; i < 800; i += 16) {
-            platforms.create(i, 500, 'metal_center')
+            this.platforms.create(i, 500, 'metal_center')
         }
         
         let playerConfig = localStorage.getItem('MCPlayerData') || {}
-        this.player = createMC(this, 100, 100, 'MC', playerConfig);
+        this.player = createPlayer(this, 100, 100, 'Player', playerConfig);
         
         this.physics.add.existing(this.player)
         this.player.setSize(30, 55)
         this.player.body.offset.x = 50;
         this.player.body.offset.y = 70;
-        
+        console.log('*** HERE ***')
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravity(0, 300)
 
-        this.physics.add.collider(this.player, platforms);
+        this.physics.add.collider(this.player, this.platforms);
+        console.log(this.physics)
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -367,7 +369,7 @@ export class RobotFight extends Scene
             scale: { start: 1, end: 2, ease: 'Cubic.easeOut' }
         })
 
-        this.physics.add.collider(this.sparks, platforms, (spark, platform) => {
+        this.physics.add.collider(this.sparks, this.platforms, (spark, platform) => {
             const { x, y } = spark.body.center;
             spark.disableBody(true, true)
 
@@ -385,7 +387,7 @@ export class RobotFight extends Scene
         this.foe.body.offset.y = 65;
         this.foe.setCollideWorldBounds(true)
         this.foe.body.setGravity(0, 300)
-        this.physics.add.collider(this.foe, platforms)
+        this.physics.add.collider(this.foe, this.platforms)
 
         this.physics.add.collider(this.sparks, this.foe, (foe, spark) => {
             const { x, y } = spark.body.center;

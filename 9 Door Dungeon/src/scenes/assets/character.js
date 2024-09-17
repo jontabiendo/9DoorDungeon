@@ -2,7 +2,7 @@ import { HitBox } from "./hitBox";
 
 export class Character extends Phaser.Physics.Arcade.Sprite
 {
-  constructor(scene, x, y, key)
+  constructor(scene, x, y, key, config)
   {
     super(scene, x, y, key);
     this.hp = 1000;
@@ -13,12 +13,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     this.facing = 'right';
     this.dead = false;
     this.projectile;
-    this.meleeAtt
-    this.lastAttack;
-    this.lastFired;
-    this.attackSound;
-    this.projectileSound;
-    this.soundFX;
+    this.meleeAtt;
+    this.lastAttack = 1;
+    this.lastFired = 0;
 
     //animations
     this.idleAnim;
@@ -35,6 +32,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     //eventKeys
     this.charHit;
     // this.charDie;
+
+    //soundfx
+    this.meleeSound1
   };
 
   idle() 
@@ -69,17 +69,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite
   // }
 
   //action methods
-
-  // attack()
-  // {
-  //   this.attackLocked = true
-  // }
-
-  // shoot()
-  // {
-
-  // }
-
   getHit(damage)
   {
     this.hp -= damage * this.armor;
